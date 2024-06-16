@@ -17,6 +17,7 @@ namespace WorkshopEditor
             Search();
         }
 
+        List<string> games = ["BFME1", "BFME2", "RotWK"];
         List<BfmeWorkshopEntry> entries = new List<BfmeWorkshopEntry>();
 
         private async void Search(string? ownerUuid = null)
@@ -28,7 +29,7 @@ namespace WorkshopEditor
 
             lbxResults.Items.Clear();
             foreach (var result in entries)
-                lbxResults.Items.Add($"{result.Name} (by: {result.Author})");
+                lbxResults.Items.Add($"[{games[result.Game]}] {result.Name}  |  {result.Author}");
         }
 
         private void btnSearch_Click(object sender, EventArgs e) => Search();
@@ -83,14 +84,19 @@ namespace WorkshopEditor
             if (lbxResults.SelectedIndex == -1)
                 return;
 
+            pgbSync.Visible = true;
+
             try
             {
-                await BfmeWorkshopSyncManager.Sync(await BfmeWorkshopDownloadManager.Download(entries[lbxResults.SelectedIndex].Guid), (progress) => Debug.WriteLine(progress), (title, progress) => Debug.WriteLine(title + " " + progress));
+                await BfmeWorkshopSyncManager.Sync(await BfmeWorkshopDownloadManager.Download(entries[lbxResults.SelectedIndex].Guid), (progress) => pgbSync.Value = progress, (title, progress) => lblStatus.Text = title != "" ? $"{title} {progress}%" : "");
+                MessageBox.Show("Sync complete!");
             }
             catch(Exception ex)
             {
                 MessageBox.Show(ex.Message);
             }
+
+            pgbSync.Visible = false;
         }
 
         private void workshopEntryEditorToolStripMenuItem_Click(object sender, EventArgs e)

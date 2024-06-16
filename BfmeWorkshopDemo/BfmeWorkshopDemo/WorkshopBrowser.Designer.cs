@@ -32,6 +32,8 @@
             btnSearch = new Button();
             lbxResults = new ListBox();
             groupBox1 = new GroupBox();
+            pgbSync = new ProgressBar();
+            btnSync = new Button();
             btnDownload = new Button();
             label9 = new Label();
             label8 = new Label();
@@ -54,6 +56,7 @@
             txtArtworkUrl = new TextBox();
             txtVersion = new TextBox();
             txtName = new TextBox();
+            lblStatus = new Label();
             cbbGame = new ComboBox();
             cbbSortMode = new ComboBox();
             nudPage = new NumericUpDown();
@@ -67,7 +70,6 @@
             menuStrip1 = new MenuStrip();
             toolsToolStripMenuItem = new ToolStripMenuItem();
             workshopEntryEditorToolStripMenuItem = new ToolStripMenuItem();
-            btnSync = new Button();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)nudPage).BeginInit();
@@ -106,6 +108,7 @@
             // 
             // groupBox1
             // 
+            groupBox1.Controls.Add(pgbSync);
             groupBox1.Controls.Add(btnSync);
             groupBox1.Controls.Add(btnDownload);
             groupBox1.Controls.Add(label9);
@@ -133,6 +136,24 @@
             groupBox1.TabIndex = 3;
             groupBox1.TabStop = false;
             groupBox1.Text = "Entry preview";
+            // 
+            // pgbSync
+            // 
+            pgbSync.Location = new Point(6, 695);
+            pgbSync.Name = "pgbSync";
+            pgbSync.Size = new Size(192, 23);
+            pgbSync.TabIndex = 23;
+            pgbSync.Visible = false;
+            // 
+            // btnSync
+            // 
+            btnSync.Location = new Point(204, 695);
+            btnSync.Name = "btnSync";
+            btnSync.Size = new Size(75, 23);
+            btnSync.TabIndex = 18;
+            btnSync.Text = "Sync";
+            btnSync.UseVisualStyleBackColor = true;
+            btnSync.Click += btnSync_Click;
             // 
             // btnDownload
             // 
@@ -329,6 +350,15 @@
             txtName.Size = new Size(354, 23);
             txtName.TabIndex = 17;
             // 
+            // lblStatus
+            // 
+            lblStatus.AutoSize = true;
+            lblStatus.BackColor = Color.Transparent;
+            lblStatus.Location = new Point(538, 858);
+            lblStatus.Name = "lblStatus";
+            lblStatus.Size = new Size(0, 15);
+            lblStatus.TabIndex = 24;
+            // 
             // cbbGame
             // 
             cbbGame.DropDownStyle = ComboBoxStyle.DropDownList;
@@ -444,21 +474,12 @@
             workshopEntryEditorToolStripMenuItem.Text = "Workshop Entry Editor";
             workshopEntryEditorToolStripMenuItem.Click += workshopEntryEditorToolStripMenuItem_Click;
             // 
-            // btnSync
-            // 
-            btnSync.Location = new Point(204, 695);
-            btnSync.Name = "btnSync";
-            btnSync.Size = new Size(75, 23);
-            btnSync.TabIndex = 18;
-            btnSync.Text = "Sync";
-            btnSync.UseVisualStyleBackColor = true;
-            btnSync.Click += btnSync_Click;
-            // 
             // WorkshopBrowser
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(910, 878);
+            Controls.Add(lblStatus);
             Controls.Add(label14);
             Controls.Add(label12);
             Controls.Add(label15);
@@ -530,5 +551,7 @@
         private ToolStripMenuItem toolsToolStripMenuItem;
         private ToolStripMenuItem workshopEntryEditorToolStripMenuItem;
         private Button btnSync;
+        private ProgressBar pgbSync;
+        private Label lblStatus;
     }
 }
