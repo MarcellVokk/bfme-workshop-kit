@@ -1,6 +1,9 @@
 using BfmeWorkshopKit.Data;
 using BfmeWorkshopKit.Logic;
+using Newtonsoft.Json;
 using System.Data;
+using System.Diagnostics;
+using System.Security.Cryptography;
 
 namespace WorkshopEditor
 {
@@ -57,19 +60,36 @@ namespace WorkshopEditor
             if (lbxResults.SelectedIndex == -1)
                 return;
 
-            FolderBrowserDialog fbd = new FolderBrowserDialog();
+            SaveFileDialog sfd = new SaveFileDialog();
+            sfd.FileName = $"{entries[lbxResults.SelectedIndex].Guid}.json";
+            sfd.Filter = "Bfme Workshop Entry File|*.json";
 
-            if (fbd.ShowDialog() == DialogResult.OK)
+            if (sfd.ShowDialog() == DialogResult.OK)
             {
                 try
                 {
-                    await BfmeWorkshopDownloadManager.Download(entries[lbxResults.SelectedIndex].Guid, fbd.SelectedPath);
+                    await BfmeWorkshopDownloadManager.DownloadTo(entries[lbxResults.SelectedIndex].Guid, sfd.FileName);
                     MessageBox.Show("Download complete!");
                 }
                 catch (Exception ex)
                 {
                     MessageBox.Show(ex.Message);
                 }
+            }
+        }
+
+        private async void btnSync_Click(object sender, EventArgs e)
+        {
+            if (lbxResults.SelectedIndex == -1)
+                return;
+
+            try
+            {
+                await BfmeWorkshopSyncManager.Sync(await BfmeWorkshopDownloadManager.Download(entries[lbxResults.SelectedIndex].Guid), (progress) => Debug.WriteLine(progress), (title, progress) => Debug.WriteLine(title + " " + progress));
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message);
             }
         }
 

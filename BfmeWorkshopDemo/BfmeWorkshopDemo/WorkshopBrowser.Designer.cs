@@ -67,6 +67,7 @@
             menuStrip1 = new MenuStrip();
             toolsToolStripMenuItem = new ToolStripMenuItem();
             workshopEntryEditorToolStripMenuItem = new ToolStripMenuItem();
+            btnSync = new Button();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)nudPage).BeginInit();
@@ -105,6 +106,7 @@
             // 
             // groupBox1
             // 
+            groupBox1.Controls.Add(btnSync);
             groupBox1.Controls.Add(btnDownload);
             groupBox1.Controls.Add(label9);
             groupBox1.Controls.Add(label8);
@@ -442,6 +444,16 @@
             workshopEntryEditorToolStripMenuItem.Text = "Workshop Entry Editor";
             workshopEntryEditorToolStripMenuItem.Click += workshopEntryEditorToolStripMenuItem_Click;
             // 
+            // btnSync
+            // 
+            btnSync.Location = new Point(204, 695);
+            btnSync.Name = "btnSync";
+            btnSync.Size = new Size(75, 23);
+            btnSync.TabIndex = 18;
+            btnSync.Text = "Sync";
+            btnSync.UseVisualStyleBackColor = true;
+            btnSync.Click += btnSync_Click;
+            // 
             // WorkshopBrowser
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -517,5 +529,6 @@
         private MenuStrip menuStrip1;
         private ToolStripMenuItem toolsToolStripMenuItem;
         private ToolStripMenuItem workshopEntryEditorToolStripMenuItem;
+        private Button btnSync;
     }
 }

@@ -170,6 +170,7 @@ namespace WorkshopEditor
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
             using SaveFileDialog sfd = new SaveFileDialog();
+            sfd.FileName = $"{txtGuid.Text}.json";
             sfd.Filter = "Bfme Workshop Entry File|*.json";
 
             if (sfd.ShowDialog() == DialogResult.OK)
