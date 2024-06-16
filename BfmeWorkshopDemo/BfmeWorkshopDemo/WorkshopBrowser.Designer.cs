@@ -231,8 +231,10 @@
             txtFiles.Multiline = true;
             txtFiles.Name = "txtFiles";
             txtFiles.ReadOnly = true;
+            txtFiles.ScrollBars = ScrollBars.Both;
             txtFiles.Size = new Size(354, 224);
             txtFiles.TabIndex = 22;
+            txtFiles.WordWrap = false;
             // 
             // label2
             // 

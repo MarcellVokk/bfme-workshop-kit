@@ -25,7 +25,7 @@ namespace WorkshopEditor
 
             lbxResults.Items.Clear();
             foreach (var result in entries)
-                lbxResults.Items.Add(result.Name);
+                lbxResults.Items.Add($"{result.Name} (by: {result.Author})");
         }
 
         private void btnSearch_Click(object sender, EventArgs e) => Search();
