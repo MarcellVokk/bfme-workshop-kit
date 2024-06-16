@@ -11,10 +11,16 @@ namespace BfmeWorkshopKit.Logic
 {
     public static class BfmeWorkshopDownloadManager
     {
-        public static async Task Download(string entryGuid, string destinationDirectory)
+        public static async Task DownloadTo(string entryGuid, string destinationFileName)
         {
             string response = await ApiRequestManagger.Get(BfmeWorkshopAuthInfo.Unauthenticated, "workshop/download", new Dictionary<string, string>() { { "guid", entryGuid } });
-            File.WriteAllText(Path.Combine(destinationDirectory, $"{entryGuid}.json"), JsonConvert.SerializeObject(JsonConvert.DeserializeObject(response), Formatting.Indented));
+            File.WriteAllText(destinationFileName, JsonConvert.SerializeObject(JsonConvert.DeserializeObject(response), Formatting.Indented));
+        }
+
+        public static async Task<BfmeWorkshopEntry> Download(string entryGuid)
+        {
+            string response = await ApiRequestManagger.Get(BfmeWorkshopAuthInfo.Unauthenticated, "workshop/download", new Dictionary<string, string>() { { "guid", entryGuid } });
+            return JsonConvert.DeserializeObject<BfmeWorkshopEntry>(response);
         }
     }
 }
