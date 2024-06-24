@@ -1,18 +1,18 @@
 ﻿using BfmeWorkshopKit.Data;
 using Microsoft.Win32;
-using System;
-using System.Collections.Generic;
+using Newtonsoft.Json;
 using System.Diagnostics;
-using System.Linq;
 using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BfmeWorkshopKit.Logic
 {
     public static class BfmeWorkshopSyncManager
     {
         private static HttpClient HttpClient = new HttpClient() { Timeout = Timeout.InfiniteTimeSpan };
+
+        public static Action<BfmeWorkshopEntry>? OnSyncBegin;
+        public static Action<int>? OnSyncUpdate;
+        public static Action? OnSyncEnd;
 
         private static Dictionary<int, (string gameLanguage, string gameDirectory)> GetVirtualRegistry() => new Dictionary<int, (string gameLanguage, string gameDirectory)>
         {
@@ -23,56 +23,82 @@ namespace BfmeWorkshopKit.Logic
 
         public static async Task Sync(BfmeWorkshopEntry entry, Action<int> OnProgressUpdate, Action<string, int> OnDownloadUpdate)
         {
-            List<(BfmeWorkshopFile file, int game, bool isGameFile)> files = entry.Files.Select(x => (x, entry.Game, false)).ToList();
-            double progress = 0;
-            int reportedProgress = 0;
-            var virtualRegistry = GetVirtualRegistry();
-
-            if (entry.Game == 0)
-                files.AddRange((await BfmeWorkshopQueryManager.Get("original-BFME1")).entry.Files.Select(x => (file: x, game: 0, isGameFile: true)).Where(x => !files.Any(y => y.game == x.game && y.file.Name == x.file.Name)));
-            if (entry.Game == 1 || entry.Game == 2)
-                files.AddRange((await BfmeWorkshopQueryManager.Get("original-BFME2")).entry.Files.Select(x => (file: x, game: 1, isGameFile: true)).Where(x => !files.Any(y => y.game == x.game && y.file.Name == x.file.Name)));
-            if (entry.Game == 2)
-                files.AddRange((await BfmeWorkshopQueryManager.Get("original-RotWK")).entry.Files.Select(x => (file: x, game: 2, isGameFile: true)).Where(x => !files.Any(y => y.game == x.game && y.file.Name == x.file.Name)));
-
-            files = files.Where(x => x.file.Language == "ALL" || x.file.Language == "" || x.file.Language == virtualRegistry[x.game].gameLanguage).ToList();
-
-            if (files.Select(x => x.game).Distinct().Any(x => virtualRegistry[x].gameDirectory == ""))
-                throw new BfmeWorkshopGameNotInstalledSyncException("One or more bfme game required by this mod/patch is not installed.");
-
             OnProgressUpdate.Invoke(0);
+            OnSyncBegin?.Invoke(entry);
 
-            foreach (Process p in Process.GetProcessesByName("game.dat"))
-                p.Kill();
-            foreach (Process p in Process.GetProcessesByName("lotrbfme"))
-                p.Kill();
-            foreach (Process p in Process.GetProcessesByName("lotrbfme2"))
-                p.Kill();
-            foreach (Process p in Process.GetProcessesByName("lotrbfme2ep2"))
-                p.Kill();
-
-            foreach(var file in files)
+            try
             {
-                await EnsurePatchFileIdentity(file.file, file.game, file.isGameFile, virtualRegistry, OnDownloadUpdate);
+                File.WriteAllText(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "BFME Workshop", $"active-patch-{entry.Game}.json"), JsonConvert.SerializeObject(entry, Formatting.Indented));
 
-                progress++;
-                if(reportedProgress != (int)(progress / files.Count * 100d))
+                List<(BfmeWorkshopFile file, int game, bool isGameFile)> files = entry.Files.Select(x => (x, entry.Game, false)).ToList();
+                double progress = 0;
+                int reportedProgress = 0;
+                var virtualRegistry = GetVirtualRegistry();
+
+                if (entry.Game == 0)
+                    files.AddRange((await BfmeWorkshopQueryManager.Get("original-BFME1")).entry.Files.Select(x => (file: x, game: 0, isGameFile: true)).Where(x => !files.Any(y => y.game == x.game && y.file.Name == x.file.Name)));
+                if (entry.Game == 1 || entry.Game == 2)
+                    files.AddRange((await BfmeWorkshopQueryManager.Get("original-BFME2")).entry.Files.Select(x => (file: x, game: 1, isGameFile: true)).Where(x => !files.Any(y => y.game == x.game && y.file.Name == x.file.Name)));
+                if (entry.Game == 2)
+                    files.AddRange((await BfmeWorkshopQueryManager.Get("original-RotWK")).entry.Files.Select(x => (file: x, game: 2, isGameFile: true)).Where(x => !files.Any(y => y.game == x.game && y.file.Name == x.file.Name)));
+
+                files = files.Where(x => x.file.Language == "ALL" || x.file.Language == "" || x.file.Language == virtualRegistry[x.game].gameLanguage).ToList();
+
+                if (files.Select(x => x.game).Distinct().Any(x => virtualRegistry[x].gameDirectory == ""))
+                    throw new BfmeWorkshopGameNotInstalledSyncException("One or more bfme game required by this mod/patch is not installed.");
+
+                foreach (Process p in Process.GetProcessesByName("game.dat"))
+                    p.Kill();
+                foreach (Process p in Process.GetProcessesByName("lotrbfme"))
+                    p.Kill();
+                foreach (Process p in Process.GetProcessesByName("lotrbfme2"))
+                    p.Kill();
+                foreach (Process p in Process.GetProcessesByName("lotrbfme2ep2"))
+                    p.Kill();
+
+                foreach (var file in files)
                 {
-                    reportedProgress = (int)(progress / files.Count * 100d);
-                    OnProgressUpdate.Invoke(reportedProgress);
-                }
-            }
+                    await EnsurePatchFileIdentity(file.file, file.game, file.isGameFile, virtualRegistry, OnDownloadUpdate);
 
-            foreach(var game in files.Select(x => x.game).Distinct())
-                foreach (string file in Directory.GetFiles(virtualRegistry[game].gameDirectory, "*.*", SearchOption.AllDirectories))
-                    if (!files.Any(x => file == Path.Combine(virtualRegistry[game].gameDirectory, x.file.Name)))
-                        File.Delete(file);
+                    progress++;
+                    if (reportedProgress != (int)(progress / files.Count * 100d))
+                    {
+                        reportedProgress = (int)(progress / files.Count * 100d);
+                        OnProgressUpdate.Invoke(reportedProgress);
+                        OnSyncUpdate?.Invoke(reportedProgress);
+                    }
+                }
+
+                foreach (var game in files.Select(x => x.game).Distinct())
+                    foreach (string file in Directory.GetFiles(virtualRegistry[game].gameDirectory, "*.*", SearchOption.AllDirectories))
+                        if (!files.Any(x => file == Path.Combine(virtualRegistry[game].gameDirectory, x.file.Name)))
+                            File.Delete(file);
+            }
+            catch
+            {
+                throw;
+            }
+            finally
+            {
+                OnSyncEnd?.Invoke();
+            }
+        }
+
+        public static BfmeWorkshopEntry? GetActivePatch(int game)
+        {
+            try
+            {
+                if (File.Exists(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "BFME Workshop", $"active-patch-{game}.json")))
+                    return JsonConvert.DeserializeObject<BfmeWorkshopEntry>(File.ReadAllText(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "BFME Workshop", $"active-patch-{game}.json")));
+            }
+            catch { }
+            return null;
         }
 
         private static async Task EnsurePatchFileIdentity(BfmeWorkshopFile file, int game, bool isGameFile, Dictionary<int, (string gameLanguage, string gameDirectory)> virtualRegistry, Action<string, int> OnDownloadUpdate)
         {
             string gameDirectory = virtualRegistry[game].gameDirectory;
-            string cacheDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "BfmeWorkshop", "FileCache");
+            string cacheDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "BFME Workshop", "Cache");
 
             if (!Directory.Exists(cacheDirectory))
                 Directory.CreateDirectory(cacheDirectory);

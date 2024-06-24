@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using BfmeWorkshopKit.Logic;
 
 namespace BfmeWorkshopKit.Data
 {
@@ -19,5 +15,7 @@ namespace BfmeWorkshopKit.Data
         public int Type;
         public long CreationTime;
         public List<BfmeWorkshopFile> Files;
+
+        public static async Task<BfmeWorkshopEntry> BaseGame(int game) => (await BfmeWorkshopQueryManager.Get($"original-{(game < 2 ? $"BFME{game + 1}" : "RotWK")}")).entry;
     }
 }
