@@ -1,5 +1,8 @@
 # WorkshopKit by Bfme Foundation
 #### This project is part of the Bfme Foundation Project!
+<a href="https://github.com/MarcellVokk/bfme-foundation-project">
+    <img src="https://img.shields.io/badge/GitHub-Foundation Project-lime"/>
+</a>
 
 ## Welcome
 Welcome to the official github repository of WorkshopKit!
