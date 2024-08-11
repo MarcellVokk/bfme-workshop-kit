@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="BfmeWorkshopKit" Version="1.1.0" />
+    <PackageReference Include="BfmeFoundationProject.WorkshopKit" Version="1.5.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
 

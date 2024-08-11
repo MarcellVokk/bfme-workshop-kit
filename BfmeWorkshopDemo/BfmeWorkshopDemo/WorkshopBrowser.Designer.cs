@@ -34,10 +34,11 @@
             groupBox1 = new GroupBox();
             pgbSync = new ProgressBar();
             btnSync = new Button();
-            btnDownload = new Button();
             label9 = new Label();
             label8 = new Label();
             groupBox2 = new GroupBox();
+            label15 = new Label();
+            txtVersions = new TextBox();
             label1 = new Label();
             txtDownloads = new TextBox();
             label7 = new Label();
@@ -60,34 +61,29 @@
             cbbGame = new ComboBox();
             cbbSortMode = new ComboBox();
             nudPage = new NumericUpDown();
-            txtOwnerUuid = new TextBox();
-            btnSearchByOwner = new Button();
             label10 = new Label();
             label11 = new Label();
             label12 = new Label();
             label14 = new Label();
-            label15 = new Label();
-            menuStrip1 = new MenuStrip();
-            toolsToolStripMenuItem = new ToolStripMenuItem();
-            workshopEntryEditorToolStripMenuItem = new ToolStripMenuItem();
+            cbbType = new ComboBox();
+            label16 = new Label();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)nudPage).BeginInit();
-            menuStrip1.SuspendLayout();
             SuspendLayout();
             // 
             // txtKeyword
             // 
             txtKeyword.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            txtKeyword.Location = new Point(12, 56);
+            txtKeyword.Location = new Point(12, 27);
             txtKeyword.Name = "txtKeyword";
-            txtKeyword.Size = new Size(466, 23);
+            txtKeyword.Size = new Size(345, 23);
             txtKeyword.TabIndex = 0;
             // 
             // btnSearch
             // 
             btnSearch.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            btnSearch.Location = new Point(823, 56);
+            btnSearch.Location = new Point(823, 27);
             btnSearch.Name = "btnSearch";
             btnSearch.Size = new Size(75, 23);
             btnSearch.TabIndex = 1;
@@ -100,9 +96,9 @@
             lbxResults.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             lbxResults.FormattingEnabled = true;
             lbxResults.ItemHeight = 15;
-            lbxResults.Location = new Point(12, 131);
+            lbxResults.Location = new Point(12, 56);
             lbxResults.Name = "lbxResults";
-            lbxResults.Size = new Size(514, 724);
+            lbxResults.Size = new Size(514, 799);
             lbxResults.TabIndex = 2;
             lbxResults.SelectedIndexChanged += lbxResults_SelectedIndexChanged;
             // 
@@ -110,7 +106,6 @@
             // 
             groupBox1.Controls.Add(pgbSync);
             groupBox1.Controls.Add(btnSync);
-            groupBox1.Controls.Add(btnDownload);
             groupBox1.Controls.Add(label9);
             groupBox1.Controls.Add(label8);
             groupBox1.Controls.Add(groupBox2);
@@ -130,40 +125,30 @@
             groupBox1.Controls.Add(txtArtworkUrl);
             groupBox1.Controls.Add(txtVersion);
             groupBox1.Controls.Add(txtName);
-            groupBox1.Location = new Point(532, 131);
+            groupBox1.Location = new Point(532, 56);
             groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(366, 724);
+            groupBox1.Size = new Size(366, 799);
             groupBox1.TabIndex = 3;
             groupBox1.TabStop = false;
             groupBox1.Text = "Entry preview";
             // 
             // pgbSync
             // 
-            pgbSync.Location = new Point(6, 695);
+            pgbSync.Location = new Point(6, 770);
             pgbSync.Name = "pgbSync";
-            pgbSync.Size = new Size(192, 23);
+            pgbSync.Size = new Size(273, 23);
             pgbSync.TabIndex = 23;
             pgbSync.Visible = false;
             // 
             // btnSync
             // 
-            btnSync.Location = new Point(204, 695);
+            btnSync.Location = new Point(285, 770);
             btnSync.Name = "btnSync";
             btnSync.Size = new Size(75, 23);
             btnSync.TabIndex = 18;
             btnSync.Text = "Sync";
             btnSync.UseVisualStyleBackColor = true;
             btnSync.Click += btnSync_Click;
-            // 
-            // btnDownload
-            // 
-            btnDownload.Location = new Point(285, 695);
-            btnDownload.Name = "btnDownload";
-            btnDownload.Size = new Size(75, 23);
-            btnDownload.TabIndex = 18;
-            btnDownload.Text = "Download";
-            btnDownload.UseVisualStyleBackColor = true;
-            btnDownload.Click += btnDownload_Click;
             // 
             // label9
             // 
@@ -186,14 +171,33 @@
             // groupBox2
             // 
             groupBox2.BackColor = SystemColors.Control;
+            groupBox2.Controls.Add(label15);
+            groupBox2.Controls.Add(txtVersions);
             groupBox2.Controls.Add(label1);
             groupBox2.Controls.Add(txtDownloads);
             groupBox2.Location = new Point(6, 619);
             groupBox2.Name = "groupBox2";
-            groupBox2.Size = new Size(354, 70);
+            groupBox2.Size = new Size(354, 145);
             groupBox2.TabIndex = 4;
             groupBox2.TabStop = false;
             groupBox2.Text = "Metadata";
+            // 
+            // label15
+            // 
+            label15.AutoSize = true;
+            label15.Location = new Point(6, 63);
+            label15.Name = "label15";
+            label15.Size = new Size(50, 15);
+            label15.TabIndex = 14;
+            label15.Text = "Versions";
+            // 
+            // txtVersions
+            // 
+            txtVersions.Location = new Point(6, 81);
+            txtVersions.Name = "txtVersions";
+            txtVersions.ReadOnly = true;
+            txtVersions.Size = new Size(342, 23);
+            txtVersions.TabIndex = 17;
             // 
             // label1
             // 
@@ -364,7 +368,7 @@
             cbbGame.DropDownStyle = ComboBoxStyle.DropDownList;
             cbbGame.FormattingEnabled = true;
             cbbGame.Items.AddRange(new object[] { "-1 = All games", "0 = BFME1", "1 = BFME2", "2 = RotWK" });
-            cbbGame.Location = new Point(484, 56);
+            cbbGame.Location = new Point(363, 27);
             cbbGame.Name = "cbbGame";
             cbbGame.Size = new Size(121, 23);
             cbbGame.TabIndex = 4;
@@ -373,42 +377,23 @@
             // 
             cbbSortMode.DropDownStyle = ComboBoxStyle.DropDownList;
             cbbSortMode.FormattingEnabled = true;
-            cbbSortMode.Items.AddRange(new object[] { "0 = Most downloads", "1 = Most recent" });
-            cbbSortMode.Location = new Point(611, 56);
+            cbbSortMode.Items.AddRange(new object[] { "0 = Most downloads", "1 = Most recent", "2 = Alphabetical" });
+            cbbSortMode.Location = new Point(490, 27);
             cbbSortMode.Name = "cbbSortMode";
-            cbbSortMode.Size = new Size(138, 23);
+            cbbSortMode.Size = new Size(120, 23);
             cbbSortMode.TabIndex = 4;
             // 
             // nudPage
             // 
-            nudPage.Location = new Point(755, 56);
+            nudPage.Location = new Point(755, 27);
             nudPage.Name = "nudPage";
             nudPage.Size = new Size(62, 23);
             nudPage.TabIndex = 5;
             // 
-            // txtOwnerUuid
-            // 
-            txtOwnerUuid.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            txtOwnerUuid.Location = new Point(12, 102);
-            txtOwnerUuid.Name = "txtOwnerUuid";
-            txtOwnerUuid.Size = new Size(466, 23);
-            txtOwnerUuid.TabIndex = 0;
-            // 
-            // btnSearchByOwner
-            // 
-            btnSearchByOwner.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            btnSearchByOwner.Location = new Point(484, 101);
-            btnSearchByOwner.Name = "btnSearchByOwner";
-            btnSearchByOwner.Size = new Size(75, 23);
-            btnSearchByOwner.TabIndex = 1;
-            btnSearchByOwner.Text = "Search";
-            btnSearchByOwner.UseVisualStyleBackColor = true;
-            btnSearchByOwner.Click += btnSearchByOwner_Click;
-            // 
             // label10
             // 
             label10.AutoSize = true;
-            label10.Location = new Point(12, 38);
+            label10.Location = new Point(12, 9);
             label10.Name = "label10";
             label10.Size = new Size(53, 15);
             label10.TabIndex = 6;
@@ -417,7 +402,7 @@
             // label11
             // 
             label11.AutoSize = true;
-            label11.Location = new Point(484, 38);
+            label11.Location = new Point(363, 9);
             label11.Name = "label11";
             label11.Size = new Size(38, 15);
             label11.TabIndex = 6;
@@ -426,7 +411,7 @@
             // label12
             // 
             label12.AutoSize = true;
-            label12.Location = new Point(611, 38);
+            label12.Location = new Point(490, 9);
             label12.Name = "label12";
             label12.Size = new Size(37, 15);
             label12.TabIndex = 6;
@@ -435,44 +420,30 @@
             // label14
             // 
             label14.AutoSize = true;
-            label14.Location = new Point(755, 38);
+            label14.Location = new Point(755, 9);
             label14.Name = "label14";
             label14.Size = new Size(33, 15);
             label14.TabIndex = 6;
             label14.Text = "Page";
             // 
-            // label15
+            // cbbType
             // 
-            label15.AutoSize = true;
-            label15.Location = new Point(12, 84);
-            label15.Name = "label15";
-            label15.Size = new Size(121, 15);
-            label15.TabIndex = 6;
-            label15.Text = "Search by owner uuid";
+            cbbType.DropDownStyle = ComboBoxStyle.DropDownList;
+            cbbType.FormattingEnabled = true;
+            cbbType.Items.AddRange(new object[] { "-2 = Patches and mods", "-3 = Enhancements", "-1 = Everything", "0 = Patches", "1 = Mods", "2 = Enhancements", "3 = Map packs" });
+            cbbType.Location = new Point(616, 27);
+            cbbType.Name = "cbbType";
+            cbbType.Size = new Size(133, 23);
+            cbbType.TabIndex = 4;
             // 
-            // menuStrip1
+            // label16
             // 
-            menuStrip1.BackColor = Color.FromArgb(224, 224, 224);
-            menuStrip1.Items.AddRange(new ToolStripItem[] { toolsToolStripMenuItem });
-            menuStrip1.Location = new Point(0, 0);
-            menuStrip1.Name = "menuStrip1";
-            menuStrip1.Size = new Size(910, 24);
-            menuStrip1.TabIndex = 7;
-            menuStrip1.Text = "menuStrip1";
-            // 
-            // toolsToolStripMenuItem
-            // 
-            toolsToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { workshopEntryEditorToolStripMenuItem });
-            toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
-            toolsToolStripMenuItem.Size = new Size(46, 20);
-            toolsToolStripMenuItem.Text = "Tools";
-            // 
-            // workshopEntryEditorToolStripMenuItem
-            // 
-            workshopEntryEditorToolStripMenuItem.Name = "workshopEntryEditorToolStripMenuItem";
-            workshopEntryEditorToolStripMenuItem.Size = new Size(192, 22);
-            workshopEntryEditorToolStripMenuItem.Text = "Workshop Entry Editor";
-            workshopEntryEditorToolStripMenuItem.Click += workshopEntryEditorToolStripMenuItem_Click;
+            label16.AutoSize = true;
+            label16.Location = new Point(616, 9);
+            label16.Name = "label16";
+            label16.Size = new Size(31, 15);
+            label16.TabIndex = 6;
+            label16.Text = "Type";
             // 
             // WorkshopBrowser
             // 
@@ -481,21 +452,18 @@
             ClientSize = new Size(910, 878);
             Controls.Add(lblStatus);
             Controls.Add(label14);
+            Controls.Add(label16);
             Controls.Add(label12);
-            Controls.Add(label15);
             Controls.Add(label11);
             Controls.Add(label10);
             Controls.Add(nudPage);
+            Controls.Add(cbbType);
             Controls.Add(cbbSortMode);
             Controls.Add(cbbGame);
             Controls.Add(groupBox1);
             Controls.Add(lbxResults);
-            Controls.Add(btnSearchByOwner);
             Controls.Add(btnSearch);
-            Controls.Add(txtOwnerUuid);
             Controls.Add(txtKeyword);
-            Controls.Add(menuStrip1);
-            MainMenuStrip = menuStrip1;
             Name = "WorkshopBrowser";
             Text = "BfmeWorkshopKit Workshop Browser";
             groupBox1.ResumeLayout(false);
@@ -503,8 +471,6 @@
             groupBox2.ResumeLayout(false);
             groupBox2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)nudPage).EndInit();
-            menuStrip1.ResumeLayout(false);
-            menuStrip1.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -534,24 +500,21 @@
         private GroupBox groupBox2;
         private Label label1;
         private TextBox txtDownloads;
-        private Button btnDownload;
         private ComboBox cbbGame;
         private ComboBox cbbSortMode;
         private NumericUpDown nudPage;
         private Label label9;
         private TextBox txtFiles;
-        private TextBox txtOwnerUuid;
-        private Button btnSearchByOwner;
         private Label label10;
         private Label label11;
         private Label label12;
         private Label label14;
-        private Label label15;
-        private MenuStrip menuStrip1;
-        private ToolStripMenuItem toolsToolStripMenuItem;
-        private ToolStripMenuItem workshopEntryEditorToolStripMenuItem;
         private Button btnSync;
         private ProgressBar pgbSync;
         private Label lblStatus;
+        private Label label15;
+        private TextBox txtVersions;
+        private ComboBox cbbType;
+        private Label label16;
     }
 }

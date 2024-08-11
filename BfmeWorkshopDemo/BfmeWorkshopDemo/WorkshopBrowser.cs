@@ -1,5 +1,5 @@
-using BfmeWorkshopKit.Data;
-using BfmeWorkshopKit.Logic;
+using BfmeFoundationProject.WorkshopKit.Data;
+using BfmeFoundationProject.WorkshopKit.Logic;
 using Newtonsoft.Json;
 using System.Data;
 using System.Diagnostics;
@@ -13,28 +13,23 @@ namespace WorkshopEditor
         {
             InitializeComponent();
             cbbGame.SelectedIndex = 0;
+            cbbType.SelectedIndex = 0;
             cbbSortMode.SelectedIndex = 0;
-            Search();
+            UpdateQuery();
         }
 
         List<string> games = ["BFME1", "BFME2", "RotWK"];
         List<BfmeWorkshopEntry> entries = new List<BfmeWorkshopEntry>();
 
-        private async void Search(string? ownerUuid = null)
+        private void btnSearch_Click(object sender, EventArgs e)
         {
-            if (ownerUuid == null)
-                entries = await BfmeWorkshopQueryManager.Search(txtKeyword.Text, cbbGame.SelectedIndex - 1, cbbSortMode.SelectedIndex, (int)nudPage.Value);
-            else
-                entries = await BfmeWorkshopQueryManager.Search(ownerUuid);
-
-            lbxResults.Items.Clear();
-            foreach (var result in entries)
-                lbxResults.Items.Add($"[{games[result.Game]}] {result.Name}  |  {result.Author}");
+            UpdateQuery();
         }
 
-        private void btnSearch_Click(object sender, EventArgs e) => Search();
-
-        private void btnSearchByOwner_Click(object sender, EventArgs e) => Search(txtOwnerUuid.Text);
+        private void btnSync_Click(object sender, EventArgs e)
+        {
+            Sync();
+        }
 
         private async void lbxResults_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -54,32 +49,19 @@ namespace WorkshopEditor
             txtFiles.Text = string.Join("\r\n", results.entry.Files.Select(x => $"{x.Name} ({x.Url})"));
 
             txtDownloads.Text = results.metadata.Downloads.ToString();
+            txtVersion.Text = string.Join(", ", results.metadata.Versions);
         }
 
-        private async void btnDownload_Click(object sender, EventArgs e)
+        private async void UpdateQuery()
         {
-            if (lbxResults.SelectedIndex == -1)
-                return;
+            entries = await BfmeWorkshopQueryManager.Query(txtKeyword.Text, cbbGame.SelectedIndex - 1, new[] { -2, -3, -1, 0, 1, 2, 3 }[cbbType.SelectedIndex], cbbSortMode.SelectedIndex, (int)nudPage.Value);
 
-            SaveFileDialog sfd = new SaveFileDialog();
-            sfd.FileName = $"{entries[lbxResults.SelectedIndex].Guid}.json";
-            sfd.Filter = "Bfme Workshop Entry File|*.json";
-
-            if (sfd.ShowDialog() == DialogResult.OK)
-            {
-                try
-                {
-                    await BfmeWorkshopDownloadManager.DownloadTo(entries[lbxResults.SelectedIndex].Guid, sfd.FileName);
-                    MessageBox.Show("Download complete!");
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.Message);
-                }
-            }
+            lbxResults.Items.Clear();
+            foreach (var result in entries)
+                lbxResults.Items.Add($"[{games[result.Game]}] {result.Name}  |  {result.Author}");
         }
 
-        private async void btnSync_Click(object sender, EventArgs e)
+        private async void Sync()
         {
             if (lbxResults.SelectedIndex == -1)
                 return;
@@ -88,21 +70,15 @@ namespace WorkshopEditor
 
             try
             {
-                await BfmeWorkshopSyncManager.Sync(await BfmeWorkshopDownloadManager.Download(entries[lbxResults.SelectedIndex].Guid), (progress) => pgbSync.Value = progress, (title, progress) => lblStatus.Text = title != "" ? $"{title} {progress}%" : "");
+                await BfmeWorkshopSyncManager.Sync((await BfmeWorkshopQueryManager.Get(entries[lbxResults.SelectedIndex].Guid)).entry, (progress) => pgbSync.Value = progress, (title, progress) => lblStatus.Text = title != "" ? $"{title} {progress}%" : "");
                 MessageBox.Show("Sync complete!");
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
             }
 
             pgbSync.Visible = false;
-        }
-
-        private void workshopEntryEditorToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            var wee = new WorkshopEntryEditor();
-            wee.Show();
         }
     }
 }
