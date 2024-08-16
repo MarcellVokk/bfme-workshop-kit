@@ -13,23 +13,28 @@ namespace WorkshopEditor
         {
             InitializeComponent();
             cbbGame.SelectedIndex = 0;
-            cbbType.SelectedIndex = 0;
             cbbSortMode.SelectedIndex = 0;
-            UpdateQuery();
+            Search();
         }
 
         List<string> games = ["BFME1", "BFME2", "RotWK"];
         List<BfmeWorkshopEntry> entries = new List<BfmeWorkshopEntry>();
 
-        private void btnSearch_Click(object sender, EventArgs e)
+        private async void Search(string? ownerUuid = null)
         {
-            UpdateQuery();
+            if (ownerUuid == null)
+                entries = await BfmeWorkshopQueryManager.Query(txtKeyword.Text, cbbGame.SelectedIndex - 1, cbbSortMode.SelectedIndex, (int)nudPage.Value);
+            else
+                entries = await BfmeWorkshopQueryManager.Query(ownerUuid);
+
+            lbxResults.Items.Clear();
+            foreach (var result in entries)
+                lbxResults.Items.Add($"[{games[result.Game]}] {result.Name}  |  {result.Author}");
         }
 
-        private void btnSync_Click(object sender, EventArgs e)
-        {
-            Sync();
-        }
+        private void btnSearch_Click(object sender, EventArgs e) => Search();
+
+        private void btnSearchByOwner_Click(object sender, EventArgs e) => Search(txtOwnerUuid.Text);
 
         private async void lbxResults_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -38,6 +43,7 @@ namespace WorkshopEditor
 
             var results = await BfmeWorkshopQueryManager.Get(entries[lbxResults.SelectedIndex].Guid);
 
+            txtGuid.Text = results.entry.Guid;
             txtName.Text = results.entry.Name;
             txtVersion.Text = results.entry.Version;
             txtDescription.Text = results.entry.Description;
@@ -47,21 +53,29 @@ namespace WorkshopEditor
             txtGame.Text = results.entry.Game.ToString();
             txtType.Text = results.entry.Type.ToString();
             txtFiles.Text = string.Join("\r\n", results.entry.Files.Select(x => $"{x.Name} ({x.Url})"));
+            txtDepepdencies.Text = string.Join("\r\n", results.entry.Dependencies);
 
             txtDownloads.Text = results.metadata.Downloads.ToString();
-            txtVersion.Text = string.Join(", ", results.metadata.Versions);
+            txtVersions.Text = string.Join(", ", results.metadata.Versions);
         }
 
-        private async void UpdateQuery()
+        private async void btnDownload_Click(object sender, EventArgs e)
         {
-            entries = await BfmeWorkshopQueryManager.Query(txtKeyword.Text, cbbGame.SelectedIndex - 1, new[] { -2, -3, -1, 0, 1, 2, 3 }[cbbType.SelectedIndex], cbbSortMode.SelectedIndex, (int)nudPage.Value);
+            if (lbxResults.SelectedIndex == -1)
+                return;
 
-            lbxResults.Items.Clear();
-            foreach (var result in entries)
-                lbxResults.Items.Add($"[{games[result.Game]}] {result.Name}  |  {result.Author}");
+            try
+            {
+                await BfmeWorkshopLibraryManager.AddToLibrary(entries[lbxResults.SelectedIndex].Guid);
+                MessageBox.Show("Added to library!");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
-        private async void Sync()
+        private async void btnSync_Click(object sender, EventArgs e)
         {
             if (lbxResults.SelectedIndex == -1)
                 return;
@@ -79,6 +93,11 @@ namespace WorkshopEditor
             }
 
             pgbSync.Visible = false;
+        }
+
+        private void workshopEntryEditorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            
         }
     }
 }
