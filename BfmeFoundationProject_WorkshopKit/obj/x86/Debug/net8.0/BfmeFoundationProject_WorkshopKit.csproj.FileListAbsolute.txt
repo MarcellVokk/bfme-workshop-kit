@@ -1,0 +1,28 @@
+F:\Visual Studio\repos\BfmeFoundationProject\src\BfmeFoundationProject_WorkshopKit\bin\x86\Debug\net8.0\BfmeFoundationProject.WorkshopKit.deps.json
+F:\Visual Studio\repos\BfmeFoundationProject\src\BfmeFoundationProject_WorkshopKit\bin\x86\Debug\net8.0\BfmeFoundationProject.WorkshopKit.dll
+F:\Visual Studio\repos\BfmeFoundationProject\src\BfmeFoundationProject_WorkshopKit\bin\x86\Debug\net8.0\BfmeFoundationProject.BfmeRegistryManagement.dll
+F:\Visual Studio\repos\BfmeFoundationProject\src\BfmeFoundationProject_WorkshopKit\bin\x86\Debug\net8.0\BfmeFoundationProject.DirectXRuntime.dll
+F:\Visual Studio\repos\BfmeFoundationProject\src\BfmeFoundationProject_WorkshopKit\bin\x86\Debug\net8.0\BfmeFoundationProject.BfmeRegistryManagement.pdb
+F:\Visual Studio\repos\BfmeFoundationProject\src\BfmeFoundationProject_WorkshopKit\obj\x86\Debug\net8.0\BfmeFoundationProject_WorkshopKit.csproj.AssemblyReference.cache
+F:\Visual Studio\repos\BfmeFoundationProject\src\BfmeFoundationProject_WorkshopKit\obj\x86\Debug\net8.0\BfmeFoundationProject_WorkshopKit.GeneratedMSBuildEditorConfig.editorconfig
+F:\Visual Studio\repos\BfmeFoundationProject\src\BfmeFoundationProject_WorkshopKit\obj\x86\Debug\net8.0\BfmeFoundationProject_WorkshopKit.AssemblyInfoInputs.cache
+F:\Visual Studio\repos\BfmeFoundationProject\src\BfmeFoundationProject_WorkshopKit\obj\x86\Debug\net8.0\BfmeFoundationProject_WorkshopKit.AssemblyInfo.cs
+F:\Visual Studio\repos\BfmeFoundationProject\src\BfmeFoundationProject_WorkshopKit\obj\x86\Debug\net8.0\BfmeFoundationProject_WorkshopKit.csproj.CoreCompileInputs.cache
+F:\Visual Studio\repos\BfmeFoundationProject\src\BfmeFoundationProject_WorkshopKit\obj\x86\Debug\net8.0\BfmeFoun.66139107.Up2Date
+F:\Visual Studio\repos\BfmeFoundationProject\src\BfmeFoundationProject_WorkshopKit\obj\x86\Debug\net8.0\BfmeFoundationProject.WorkshopKit.dll
+F:\Visual Studio\repos\BfmeFoundationProject\src\BfmeFoundationProject_WorkshopKit\obj\x86\Debug\net8.0\refint\BfmeFoundationProject.WorkshopKit.dll
+F:\Visual Studio\repos\BfmeFoundationProject\src\BfmeFoundationProject_WorkshopKit\obj\x86\Debug\net8.0\ref\BfmeFoundationProject.WorkshopKit.dll
+F:\repos\BfmeFoundationProject\src\BfmeFoundationProject_WorkshopKit\bin\x86\Debug\net8.0\BfmeFoundationProject.WorkshopKit.deps.json
+F:\repos\BfmeFoundationProject\src\BfmeFoundationProject_WorkshopKit\bin\x86\Debug\net8.0\BfmeFoundationProject.WorkshopKit.dll
+F:\repos\BfmeFoundationProject\src\BfmeFoundationProject_WorkshopKit\bin\x86\Debug\net8.0\BfmeFoundationProject.BfmeRegistryManagement.dll
+F:\repos\BfmeFoundationProject\src\BfmeFoundationProject_WorkshopKit\bin\x86\Debug\net8.0\BfmeFoundationProject.DirectXRuntime.dll
+F:\repos\BfmeFoundationProject\src\BfmeFoundationProject_WorkshopKit\bin\x86\Debug\net8.0\BfmeFoundationProject.BfmeRegistryManagement.pdb
+F:\repos\BfmeFoundationProject\src\BfmeFoundationProject_WorkshopKit\obj\x86\Debug\net8.0\BfmeFoundationProject_WorkshopKit.csproj.AssemblyReference.cache
+F:\repos\BfmeFoundationProject\src\BfmeFoundationProject_WorkshopKit\obj\x86\Debug\net8.0\BfmeFoundationProject_WorkshopKit.GeneratedMSBuildEditorConfig.editorconfig
+F:\repos\BfmeFoundationProject\src\BfmeFoundationProject_WorkshopKit\obj\x86\Debug\net8.0\BfmeFoundationProject_WorkshopKit.AssemblyInfoInputs.cache
+F:\repos\BfmeFoundationProject\src\BfmeFoundationProject_WorkshopKit\obj\x86\Debug\net8.0\BfmeFoundationProject_WorkshopKit.AssemblyInfo.cs
+F:\repos\BfmeFoundationProject\src\BfmeFoundationProject_WorkshopKit\obj\x86\Debug\net8.0\BfmeFoundationProject_WorkshopKit.csproj.CoreCompileInputs.cache
+F:\repos\BfmeFoundationProject\src\BfmeFoundationProject_WorkshopKit\obj\x86\Debug\net8.0\BfmeFoun.66139107.Up2Date
+F:\repos\BfmeFoundationProject\src\BfmeFoundationProject_WorkshopKit\obj\x86\Debug\net8.0\BfmeFoundationProject.WorkshopKit.dll
+F:\repos\BfmeFoundationProject\src\BfmeFoundationProject_WorkshopKit\obj\x86\Debug\net8.0\refint\BfmeFoundationProject.WorkshopKit.dll
+F:\repos\BfmeFoundationProject\src\BfmeFoundationProject_WorkshopKit\obj\x86\Debug\net8.0\ref\BfmeFoundationProject.WorkshopKit.dll

@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+  <metadata>
+    <id>BfmeFoundationProject.WorkshopKit</id>
+    <version>1.6.9</version>
+    <title>BfmeWorkshopKit</title>
+    <authors>Bfme Foundation Team</authors>
+    <icon>workshopkiticon.png</icon>
+    <description>Package Description</description>
+    <repository type="git" />
+    <dependencies>
+      <group targetFramework="net8.0">
+        <dependency id="BfmeFoundationProject.BfmeRegistryManagement" version="1.0.4" exclude="Build,Analyzers" />
+        <dependency id="BfmeFoundationProject.DirectXRuntime" version="1.1.0" exclude="Build,Analyzers" />
+        <dependency id="Newtonsoft.Json" version="13.0.3" exclude="Build,Analyzers" />
+      </group>
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="F:\repos\BfmeFoundationProject\src\BfmeFoundationProject_WorkshopKit\bin\Release\net8.0\BfmeFoundationProject.WorkshopKit.dll" target="lib\net8.0\BfmeFoundationProject.WorkshopKit.dll" />
+    <file src="F:\repos\BfmeFoundationProject\src\BfmeFoundationProject_WorkshopKit\workshopkiticon.png" target="\workshopkiticon.png" />
+  </files>
+</package>

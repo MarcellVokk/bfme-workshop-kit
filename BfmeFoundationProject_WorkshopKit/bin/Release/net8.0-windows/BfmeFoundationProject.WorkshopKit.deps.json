@@ -1,0 +1,91 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v8.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v8.0": {
+      "BfmeFoundationProject.WorkshopKit/1.6.1": {
+        "dependencies": {
+          "BfmeFoundationProject.BfmeRegistryManagement": "1.0.2",
+          "BfmeFoundationProject.DirectXRuntime": "1.1.0",
+          "Newtonsoft.Json": "13.0.3",
+          "BfmeFoundationProject.BfmeRegistryManagement.Reference": "1.0.2.0",
+          "BfmeFoundationProject.DirectXRuntime.Reference": "1.1.0.0"
+        },
+        "runtime": {
+          "BfmeFoundationProject.WorkshopKit.dll": {}
+        }
+      },
+      "Newtonsoft.Json/13.0.3": {
+        "runtime": {
+          "lib/net6.0/Newtonsoft.Json.dll": {
+            "assemblyVersion": "13.0.0.0",
+            "fileVersion": "13.0.3.27908"
+          }
+        }
+      },
+      "BfmeFoundationProject.BfmeRegistryManagement/1.0.2": {
+        "runtime": {
+          "BfmeFoundationProject.BfmeRegistryManagement.dll": {}
+        }
+      },
+      "BfmeFoundationProject.DirectXRuntime/1.1.0": {
+        "runtime": {
+          "BfmeFoundationProject.DirectXRuntime.dll": {}
+        }
+      },
+      "BfmeFoundationProject.BfmeRegistryManagement.Reference/1.0.2.0": {
+        "runtime": {
+          "BfmeFoundationProject.BfmeRegistryManagement.dll": {
+            "assemblyVersion": "1.0.2.0",
+            "fileVersion": "1.0.2.0"
+          }
+        }
+      },
+      "BfmeFoundationProject.DirectXRuntime.Reference/1.1.0.0": {
+        "runtime": {
+          "BfmeFoundationProject.DirectXRuntime.dll": {
+            "assemblyVersion": "1.1.0.0",
+            "fileVersion": "1.1.0.0"
+          }
+        }
+      }
+    }
+  },
+  "libraries": {
+    "BfmeFoundationProject.WorkshopKit/1.6.1": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Newtonsoft.Json/13.0.3": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-HrC5BXdl00IP9zeV+0Z848QWPAoCr9P3bDEZguI+gkLcBKAOxix/tLEAAHC+UvDNPv4a2d18lOReHMOagPa+zQ==",
+      "path": "newtonsoft.json/13.0.3",
+      "hashPath": "newtonsoft.json.13.0.3.nupkg.sha512"
+    },
+    "BfmeFoundationProject.BfmeRegistryManagement/1.0.2": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "BfmeFoundationProject.DirectXRuntime/1.1.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "BfmeFoundationProject.BfmeRegistryManagement.Reference/1.0.2.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "BfmeFoundationProject.DirectXRuntime.Reference/1.1.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}

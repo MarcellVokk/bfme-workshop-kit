@@ -1,0 +1,7 @@
+F:\repos\BfmeFoundationProject\bin\BfmeFoundationProject_WorkshopKit\BfmeFoundationProject.WorkshopKit.dll
+F:\repos\BfmeFoundationProject\bin\BfmeFoundationProject_WorkshopKit\BfmeFoundationProject.WorkshopKit.deps.json
+F:\repos\BfmeFoundationProject\bin\BfmeFoundationProject_WorkshopKit\AWSSDK.Core.dll
+F:\repos\BfmeFoundationProject\bin\BfmeFoundationProject_WorkshopKit\AWSSDK.S3.dll
+F:\repos\BfmeFoundationProject\bin\BfmeFoundationProject_WorkshopKit\Newtonsoft.Json.dll
+F:\repos\BfmeFoundationProject\bin\BfmeFoundationProject_WorkshopKit\BfmeFoundationProject.DirectXRuntime.dll
+F:\repos\BfmeFoundationProject\bin\BfmeFoundationProject_WorkshopKit\BfmeFoundationProject.RegistryKit.dll
