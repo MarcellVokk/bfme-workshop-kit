@@ -35,18 +35,16 @@
             pgbSync = new ProgressBar();
             btnSync = new Button();
             btnDownload = new Button();
-            label16 = new Label();
-            label9 = new Label();
             label8 = new Label();
             groupBox2 = new GroupBox();
+            label17 = new Label();
+            txtVersions = new TextBox();
             label1 = new Label();
             txtDownloads = new TextBox();
             label7 = new Label();
             label13 = new Label();
             label6 = new Label();
             label4 = new Label();
-            txtDepepdencies = new TextBox();
-            txtFiles = new TextBox();
             label = new Label();
             label2 = new Label();
             txtType = new TextBox();
@@ -74,8 +72,6 @@
             menuStrip1 = new MenuStrip();
             toolsToolStripMenuItem = new ToolStripMenuItem();
             workshopEntryEditorToolStripMenuItem = new ToolStripMenuItem();
-            txtVersions = new TextBox();
-            label17 = new Label();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)nudPage).BeginInit();
@@ -117,16 +113,12 @@
             groupBox1.Controls.Add(pgbSync);
             groupBox1.Controls.Add(btnSync);
             groupBox1.Controls.Add(btnDownload);
-            groupBox1.Controls.Add(label16);
-            groupBox1.Controls.Add(label9);
             groupBox1.Controls.Add(label8);
             groupBox1.Controls.Add(groupBox2);
             groupBox1.Controls.Add(label7);
             groupBox1.Controls.Add(label13);
             groupBox1.Controls.Add(label6);
             groupBox1.Controls.Add(label4);
-            groupBox1.Controls.Add(txtDepepdencies);
-            groupBox1.Controls.Add(txtFiles);
             groupBox1.Controls.Add(label);
             groupBox1.Controls.Add(label2);
             groupBox1.Controls.Add(txtType);
@@ -175,24 +167,6 @@
             btnDownload.UseVisualStyleBackColor = true;
             btnDownload.Click += btnDownload_Click;
             // 
-            // label16
-            // 
-            label16.AutoSize = true;
-            label16.Location = new Point(6, 515);
-            label16.Name = "label16";
-            label16.Size = new Size(81, 15);
-            label16.TabIndex = 9;
-            label16.Text = "Dependencies";
-            // 
-            // label9
-            // 
-            label9.AutoSize = true;
-            label9.Location = new Point(6, 415);
-            label9.Name = "label9";
-            label9.Size = new Size(30, 15);
-            label9.TabIndex = 9;
-            label9.Text = "Files";
-            // 
             // label8
             // 
             label8.AutoSize = true;
@@ -209,12 +183,29 @@
             groupBox2.Controls.Add(txtVersions);
             groupBox2.Controls.Add(label1);
             groupBox2.Controls.Add(txtDownloads);
-            groupBox2.Location = new Point(6, 619);
+            groupBox2.Location = new Point(6, 418);
             groupBox2.Name = "groupBox2";
-            groupBox2.Size = new Size(354, 115);
+            groupBox2.Size = new Size(354, 316);
             groupBox2.TabIndex = 4;
             groupBox2.TabStop = false;
             groupBox2.Text = "Metadata";
+            // 
+            // label17
+            // 
+            label17.AutoSize = true;
+            label17.Location = new Point(6, 63);
+            label17.Name = "label17";
+            label17.Size = new Size(50, 15);
+            label17.TabIndex = 14;
+            label17.Text = "Versions";
+            // 
+            // txtVersions
+            // 
+            txtVersions.Location = new Point(6, 81);
+            txtVersions.Name = "txtVersions";
+            txtVersions.ReadOnly = true;
+            txtVersions.Size = new Size(342, 23);
+            txtVersions.TabIndex = 17;
             // 
             // label1
             // 
@@ -268,28 +259,6 @@
             label4.Size = new Size(67, 15);
             label4.TabIndex = 13;
             label4.Text = "Description";
-            // 
-            // txtDepepdencies
-            // 
-            txtDepepdencies.Location = new Point(6, 533);
-            txtDepepdencies.Multiline = true;
-            txtDepepdencies.Name = "txtDepepdencies";
-            txtDepepdencies.ReadOnly = true;
-            txtDepepdencies.ScrollBars = ScrollBars.Both;
-            txtDepepdencies.Size = new Size(354, 79);
-            txtDepepdencies.TabIndex = 22;
-            txtDepepdencies.WordWrap = false;
-            // 
-            // txtFiles
-            // 
-            txtFiles.Location = new Point(6, 433);
-            txtFiles.Multiline = true;
-            txtFiles.Name = "txtFiles";
-            txtFiles.ReadOnly = true;
-            txtFiles.ScrollBars = ScrollBars.Both;
-            txtFiles.Size = new Size(354, 79);
-            txtFiles.TabIndex = 22;
-            txtFiles.WordWrap = false;
             // 
             // label
             // 
@@ -523,23 +492,6 @@
             workshopEntryEditorToolStripMenuItem.Text = "Workshop Entry Editor";
             workshopEntryEditorToolStripMenuItem.Click += workshopEntryEditorToolStripMenuItem_Click;
             // 
-            // txtVersions
-            // 
-            txtVersions.Location = new Point(6, 81);
-            txtVersions.Name = "txtVersions";
-            txtVersions.ReadOnly = true;
-            txtVersions.Size = new Size(342, 23);
-            txtVersions.TabIndex = 17;
-            // 
-            // label17
-            // 
-            label17.AutoSize = true;
-            label17.Location = new Point(6, 63);
-            label17.Name = "label17";
-            label17.Size = new Size(50, 15);
-            label17.TabIndex = 14;
-            label17.Text = "Versions";
-            // 
             // WorkshopBrowser
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -604,8 +556,6 @@
         private ComboBox cbbGame;
         private ComboBox cbbSortMode;
         private NumericUpDown nudPage;
-        private Label label9;
-        private TextBox txtFiles;
         private TextBox txtOwnerUuid;
         private Button btnSearchByOwner;
         private Label label10;
@@ -621,8 +571,6 @@
         private Label lblStatus;
         private Label label;
         private TextBox txtGuid;
-        private Label label16;
-        private TextBox txtDepepdencies;
         private Label label17;
         private TextBox txtVersions;
     }
