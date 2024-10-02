@@ -14,7 +14,14 @@ namespace BfmeFoundationProject.WorkshopKit.Logic
             {
                 List<BfmeWorkshopEntryPreview> libraryEntries = new List<BfmeWorkshopEntryPreview>();
 
-                if(!Directory.Exists(ConfigUtils.LibraryDirectory)) Directory.CreateDirectory(ConfigUtils.LibraryDirectory);
+                if (!File.Exists(Path.Combine(ConfigUtils.LibraryDirectory, "library_version.json")) || File.ReadAllText(Path.Combine(ConfigUtils.LibraryDirectory, "library_version.json")) != "1")
+                    if (Directory.Exists(ConfigUtils.LibraryDirectory))
+                        Directory.Delete(ConfigUtils.LibraryDirectory, true);
+
+                if (!Directory.Exists(ConfigUtils.LibraryDirectory))
+                    Directory.CreateDirectory(ConfigUtils.LibraryDirectory);
+
+                File.WriteAllText(Path.Combine(ConfigUtils.LibraryDirectory, "library_version.json"), "1");
 
                 foreach (var file in Directory.GetFiles(ConfigUtils.LibraryDirectory).OrderBy(x => new FileInfo(x).CreationTime))
                     try { libraryEntries.Add(JsonConvert.DeserializeObject<BfmeWorkshopEntryPreview>(File.ReadAllText(file))); } catch { }
@@ -47,8 +54,12 @@ namespace BfmeFoundationProject.WorkshopKit.Logic
 
         public static async Task<BfmeWorkshopEntry?> Get(string entryGuid)
         {
-            if (File.Exists(Path.Combine(ConfigUtils.LibraryDirectory, $"{entryGuid}.json")))
-                return await Task.Run(() => JsonConvert.DeserializeObject<BfmeWorkshopEntry>(File.ReadAllText(Path.Combine(ConfigUtils.LibraryDirectory, $"{entryGuid}.json"))));
+            try
+            {
+                if (File.Exists(Path.Combine(ConfigUtils.LibraryDirectory, $"{entryGuid}.json")))
+                    return await Task.Run(() => JsonConvert.DeserializeObject<BfmeWorkshopEntry>(File.ReadAllText(Path.Combine(ConfigUtils.LibraryDirectory, $"{entryGuid}.json"))));
+            }
+            catch { }
 
             return null;
         }
@@ -60,13 +71,21 @@ namespace BfmeFoundationProject.WorkshopKit.Logic
             if (!Directory.Exists(ConfigUtils.LibraryDirectory)) Directory.CreateDirectory(ConfigUtils.LibraryDirectory);
             if (entry.Type <= 1 && !Directory.Exists(keybindsDirectory)) Directory.CreateDirectory(keybindsDirectory);
 
-            File.WriteAllText(Path.Combine(ConfigUtils.LibraryDirectory, $"{entry.Guid}.json"), JsonConvert.SerializeObject(entry, Formatting.Indented));
+            try
+            {
+                File.WriteAllText(Path.Combine(ConfigUtils.LibraryDirectory, $"{entry.Guid}.json"), JsonConvert.SerializeObject(entry, Formatting.Indented));
+            }
+            catch { }
         }
 
         public static void Remove(string entryGuid)
         {
-            if (File.Exists(Path.Combine(ConfigUtils.LibraryDirectory, $"{entryGuid}.json")))
-                File.Delete(Path.Combine(ConfigUtils.LibraryDirectory, $"{entryGuid}.json"));
+            try
+            {
+                if (File.Exists(Path.Combine(ConfigUtils.LibraryDirectory, $"{entryGuid}.json")))
+                    File.Delete(Path.Combine(ConfigUtils.LibraryDirectory, $"{entryGuid}.json"));
+            }
+            catch { }
         }
 
         public static bool IsInLibrary(string entryGuid)

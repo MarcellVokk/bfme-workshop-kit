@@ -18,9 +18,9 @@
 	  <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 	  <Title>BfmeWorkshopKit</Title>
 	  <PackageIcon>workshopkiticon.png</PackageIcon>
-	  <Version>1.8.1</Version>
-	  <AssemblyVersion>1.8.1</AssemblyVersion>
-	  <FileVersion>1.8.1</FileVersion>
+	  <Version>1.9.1</Version>
+	  <AssemblyVersion>1.9.1</AssemblyVersion>
+	  <FileVersion>1.9.1</FileVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -48,7 +48,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AWSSDK.S3" Version="3.7.402.3" />
+    <PackageReference Include="AWSSDK.S3" Version="3.7.403.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
 

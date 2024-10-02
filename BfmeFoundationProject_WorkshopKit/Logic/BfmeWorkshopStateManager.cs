@@ -21,7 +21,12 @@ namespace BfmeFoundationProject.WorkshopKit.Logic
             {
                 BfmeWorkshopEntry? activePatch = await GetActivePatch(game);
                 if (activePatch != null && activePatch.Value.Type == 1)
-                    return Path.Combine(string.Join("\\", BfmeRegistryManager.GetKeyValue(game, BfmeRegistryKey.InstallPath).Trim('\\').Trim('/').Split(['\\', '/']).SkipLast(1)), "BFME Workshop", "Mods", $"{string.Join("", activePatch.Value.Name.Select(x => Path.GetInvalidPathChars().Contains(x) ? '_' : x))}-{activePatch.Value.Guid}");
+                {
+                    if (activePatch.Value.Files.Any(x => x.Guid == "mod_folder_redirect"))
+                        return activePatch.Value.Files.First(x => x.Guid == "mod_folder_redirect").Url;
+                    else
+                        return Path.Combine(string.Join("\\", BfmeRegistryManager.GetKeyValue(game, BfmeRegistryKey.InstallPath).Trim('\\').Trim('/').Split(['\\', '/']).SkipLast(1)), "BFME Workshop", "Mods", $"{string.Join("", activePatch.Value.Name.Select(x => Path.GetInvalidPathChars().Contains(x) ? '_' : x))}-{activePatch.Value.Guid}");
+                }
             }
             catch { }
             return null;

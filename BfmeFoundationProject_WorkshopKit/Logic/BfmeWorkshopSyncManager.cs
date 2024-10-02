@@ -47,7 +47,7 @@ namespace BfmeFoundationProject.WorkshopKit.Logic
             ActivePatchWatcher.EnableRaisingEvents = true;
         }
 
-        public static async Task Sync(BfmeWorkshopEntry entry, Action<int>? OnProgressUpdate = null)
+        public static async Task Sync(BfmeWorkshopEntry entry, List<string>? enhancements = null, Action<int>? OnProgressUpdate = null)
         {
             ActivePatchWatcher.EnableRaisingEvents = false;
             Syncing = true;
@@ -96,15 +96,25 @@ namespace BfmeFoundationProject.WorkshopKit.Logic
                         foreach (var dependency in entry.Dependencies)
                             dependencies.Add(await BfmeWorkshopDownloadManager.Download(dependency));
 
+                        // Download all implicit dependencies
+                        while (dependencies.SelectMany(x => x.Dependencies).Any(x => !dependencies.Any(y => y.Guid == x.Split(':')[0])))
+                            foreach (var dependency in dependencies.SelectMany(x => x.Dependencies).Where(x => !dependencies.Any(y => y.Guid == x.Split(':')[0])).ToList())
+                                dependencies.Add(await BfmeWorkshopDownloadManager.Download(dependency));
+
+                        // Download all explicit enhancements. Make sure it isn't already a dependency
+                        foreach (var explicitEnhancement in (enhancements ?? new List<string>()).Where(x => !entry.Dependencies.Any(y => y.Split(':')[0] == x.Split(':')[0])))
+                            dependencies.Add(await BfmeWorkshopDownloadManager.Download(explicitEnhancement));
+
                         // If the curent patch is a mod, and a patch (whose game is not the same as the curent patches) was listed as a dependency, set the active patch of that game to it
                         if (entry.Type == 1 && dependencies.Any(x => x.Type == 0 && x.Game != entry.Game)) await ConfigUtils.SaveActivePatch(dependencies.First(x => x.Type == 0 && x.Game != entry.Game));
 
-                        // Disable all enhancements that dont have the curent patch listed as a dependency, meaning they are not compatible (and if rotwk, disable all bfme2 enhancements)
-                        foreach (var enhancement in activeEnhancements.Values.Where(x => (x.Type == 2 && !x.Dependencies.Contains(entry.Guid) && !x.Dependencies.Contains($"{entry.Guid}:{entry.Version}")) || x.Game != entry.Game))
+                        // Disable all enhancements that dont have the curent patch listed as a dependency, meaning they are not compatible (and if rotwk, disable all bfme2 enhancements).
+                        // If there are explicit enhancements specified, disable all enhancements except those and the dependencies specified with the curent entry.
+                        foreach (var enhancement in activeEnhancements.Values.Where(x => (x.Type == 2 && !x.Dependencies.Contains(entry.Guid) && !x.Dependencies.Contains($"{entry.Guid}:{entry.Version}")) || x.Game != entry.Game || enhancements != null))
                             ConfigUtils.DisableEnhancement(enhancement, activeEnhancements, virtualRegistry);
 
-                        // Enable all enhancements that are listed as dependencies of the curent patch
-                        foreach (var dependency in dependencies.Where(x => (x.Type == 2 || x.Type == 3) && (x.Dependencies.Contains(entry.Guid) || x.Dependencies.Contains($"{entry.Guid}:{entry.Version}"))))
+                        // Enable all enhancements that are listed as dependencies (explicitly or implicitly) of the curent patch
+                        foreach (var dependency in dependencies.Where(x => (x.Type == 2 || x.Type == 3) && (x.Dependencies.Contains(entry.Guid) || x.Dependencies.Contains($"{entry.Guid}:{entry.Version}") || dependencies.Any(y => x.Dependencies.Contains(y.Guid)) || dependencies.Any(y => x.Dependencies.Contains($"{y.Guid}:{y.Version}")))))
                             ConfigUtils.EnableEnhancement(dependency, activeEnhancements, virtualRegistry);
 
                         // Prepare the files needed for this configuration. Files added sooner have priority over files added later (files added sooner overwrite files added later with the same name)
@@ -173,20 +183,18 @@ namespace BfmeFoundationProject.WorkshopKit.Logic
                         // Get the curently active patch, and if it's not set yet, set it to the base vanilla patch
                         BfmeWorkshopEntry activePatch = await BfmeWorkshopStateManager.GetActivePatch(entry.Game) ?? await BfmeWorkshopEntry.BaseGame(entry.Game);
 
-                        // If this is an enhancement, and it doesn't list the active patch as a dependency, it means it's not compatible with the curent patch
-                        if (entry.Type == 2 && (entry.Dependencies.Count == 0 ? !activePatch.IsBaseGame() : !entry.Dependencies.Contains(activePatch.Guid)))
-                            throw new BfmeWorkshopEnhancementIncompatibleSyncException($"\"{entry.Name}\" is not compatible with \"{activePatch.Name}\"");
-
                         await ConfigUtils.SaveActivePatch(activePatch);
 
                         if (activeEnhancements.ContainsKey(entry.Guid) && activeEnhancements[entry.Guid].Version == entry.Version)
                             ConfigUtils.DisableEnhancement(entry, activeEnhancements, virtualRegistry); // If the enhancement is already enabled, disable it
-                        else
-                            ConfigUtils.EnableEnhancement(entry, activeEnhancements, virtualRegistry); // If the enhancement is not enabled yet, enable it
+                        else if (entry.Type != 2 || entry.Dependencies.Count == 0 || entry.Dependencies.Contains(activePatch.Guid))
+                            ConfigUtils.EnableEnhancement(entry, activeEnhancements, virtualRegistry); // If the enhancement is not enabled yet, and is compatible with the active patch, enable it
+                        else // If it is not compatible, throw an error
+                            throw new BfmeWorkshopEnhancementIncompatibleSyncException($"\"{entry.Name}\" is not compatible with \"{activePatch.Name}\"");
 
                         // Resyncing the curently active patch to apply the changes
                         OnSyncEnd?.Invoke();
-                        await Sync(activePatch, OnProgressUpdate);
+                        await Sync(activePatch, enhancements, OnProgressUpdate);
                     });
                     return;
                 }
@@ -218,7 +226,7 @@ namespace BfmeFoundationProject.WorkshopKit.Logic
             async Task scanFolder(string folder)
             {
                 // If bfme2, and this folder is where rotwk is installed, skip this folder
-                if (game == 1 && virtualRegistry[2].gameDirectory != "" && Directory.Exists(virtualRegistry[2].gameDirectory) && folder.ToLower().Trim('\\').Trim('/') == virtualRegistry[2].gameDirectory.ToLower())
+                if (game == 1 && virtualRegistry[2].gameDirectory != "" && Directory.Exists(virtualRegistry[2].gameDirectory) && folder.ToLower().Trim('\\').Trim('/') == virtualRegistry[2].gameDirectory)
                     return;
 
                 if (folder.Replace("/", "\\").Split('\\').Last() == "BFME Workshop")
@@ -227,9 +235,9 @@ namespace BfmeFoundationProject.WorkshopKit.Logic
                 // Check every file in this folder, and if it has been modified compared to the base game, add it to the modified files list
                 foreach (var file in Directory.GetFiles(folder))
                 {
-                    string name = file.Replace(virtualRegistry[game].gameDirectory, "").Trim('\\').Trim('/');
+                    string name = file.ToLower().Replace(virtualRegistry[game].gameDirectory, "").Trim('\\').Trim('/');
                     var md5 = await FileUtils.Hash(file);
-                    if (baseGame.Files.Any(x => x.Name == name && x.Md5 == md5)) continue;
+                    if (baseGame.Files.Any(x => x.Name.ToLower() == name && x.Md5 == md5)) continue;
                     if (cloneFiles) File.Copy(file, Path.Combine(cacheDirectory, $"{md5}.pfcache"), true);
                     files.Add(new BfmeWorkshopFile() { Guid = md5, Name = name, Language = "ALL", Md5 = md5, Url = cloneFiles ? Path.Combine(cacheDirectory, $"{md5}.pfcache") : file });
                 }
@@ -247,9 +255,9 @@ namespace BfmeFoundationProject.WorkshopKit.Logic
             // This function adds the files from this entry to the curent configuration in a way that ensures that files with the same name and the same target destination directory are only added once.
             // Moreover, it also ensures only files that match the curent language are added.
             List<int[]> fileTypeConflictMap = [[0, 2, 4], [1], [0, 2, 4], [3], [0, 2, 4]];
-            List<string> conflictingFiles = files.SelectMany(x => fileTypeConflictMap[x.entry.Type].Select(y => $"{x.entry.Game}:{y}:{x.file.Name}")).ToList();
+            List<string> conflictingFiles = files.SelectMany(x => fileTypeConflictMap[x.entry.Type].Select(y => $"{x.entry.Game}:{y}:{x.file.Name.ToLower()}")).ToList();
 
-            var entryFiles = entry.Files.Select(x => (file: x, entry: entry, isBaseFile: isBaseEntry)).Where(x => !ConfigUtils.IgnoredGameFiles.Contains(Path.GetFileName(x.file.Name)) && !conflictingFiles.Contains($"{x.entry.Game}:{x.entry.Type}:{x.file.Name}"));
+            var entryFiles = entry.Files.DistinctBy(x => x.Name.ToLower()).Select(x => (file: x, entry: entry, isBaseFile: isBaseEntry)).Where(x => !ConfigUtils.IgnoredGameFiles.Contains(Path.GetFileName(x.file.Name).ToLower()) && !conflictingFiles.Contains($"{x.entry.Game}:{x.entry.Type}:{x.file.Name.ToLower()}"));
             if (entryFiles.Any(x => x.file.Language.Split(' ').Contains(virtualRegistry[x.entry.Game].gameLanguage)))
                 files.AddRange(entryFiles.Where(x => x.file.Language == "ALL" || x.file.Language == "" || x.file.Language.Split(' ').Contains(virtualRegistry[x.entry.Game].gameLanguage)));
             else
@@ -270,6 +278,17 @@ namespace BfmeFoundationProject.WorkshopKit.Logic
                 4 => virtualRegistry[entry.Game].gameDirectory,
                 _ => virtualRegistry[entry.Game].gameDirectory
             };
+
+            if (file.Guid == "mod_folder_redirect")
+                return;
+
+            if (!file.Url.StartsWith("http"))
+            {
+                if (File.Exists(file.Url))
+                    return;
+
+                throw new BfmeWorkshopFileMissingSyncException($"The file {file.Url} is missing.");
+            }
 
             if (!Directory.Exists(cacheDirectory)) Directory.CreateDirectory(cacheDirectory);
             if (!Directory.Exists(Path.GetDirectoryName(Path.Combine(destinationDirectory, fileName)))) Directory.CreateDirectory(Path.GetDirectoryName(Path.Combine(destinationDirectory, fileName)) ?? "");
@@ -323,7 +342,7 @@ namespace BfmeFoundationProject.WorkshopKit.Logic
         private static void CleanUpFiles(BfmeWorkshopEntry entry, int game, List<(BfmeWorkshopFile file, BfmeWorkshopEntry entry, bool isBaseFile)> files, Dictionary<int, (string gameLanguage, string gameDirectory, string dataDirectory)> virtualRegistry, string root)
         {
             // If not rotwk, and this folder is where rotwk is installed, skip this folder (rotwk can be installed inside bfme2's folder, and we don't want to delete it)
-            if (game != 2 && virtualRegistry[2].gameDirectory != "" && Directory.Exists(virtualRegistry[2].gameDirectory) && root.ToLower().Trim('\\').Trim('/') == virtualRegistry[2].gameDirectory.ToLower())
+            if (game != 2 && virtualRegistry[2].gameDirectory != "" && Directory.Exists(virtualRegistry[2].gameDirectory) && root.ToLower().Trim('\\').Trim('/') == virtualRegistry[2].gameDirectory)
                 return;
 
             if (root.Replace("/", "\\").Split('\\').Last() == "BFME Workshop")
@@ -331,7 +350,7 @@ namespace BfmeFoundationProject.WorkshopKit.Logic
 
             // Delete all files in this directory that are not in IgnoredGameFiles, and are not found in the curent file configuration
             foreach (string file in Directory.GetFiles(root))
-                if (!ConfigUtils.IgnoredGameFiles.Contains(Path.GetFileName(file)) && !files.Any(x => file == Path.Combine(virtualRegistry[game].gameDirectory, x.file.Name.TrimStart('\\').TrimStart('/'))))
+                if (!ConfigUtils.IgnoredGameFiles.Contains(Path.GetFileName(file).ToLower()) && !files.Any(x => x.entry.Game == game && file.ToLower() == Path.Combine(virtualRegistry[x.entry.Game].gameDirectory, x.file.Name.ToLower().TrimStart('\\').TrimStart('/'))))
                     File.Delete(file);
 
             // Call this method recursively on all subfolders in this directory
@@ -364,5 +383,10 @@ namespace BfmeFoundationProject.WorkshopKit.Logic
     public class BfmeWorkshopEnhancementIncompatibleSyncException : Exception
     {
         public BfmeWorkshopEnhancementIncompatibleSyncException(string message) : base(message) { }
+    }
+
+    public class BfmeWorkshopFileMissingSyncException : Exception
+    {
+        public BfmeWorkshopFileMissingSyncException(string message) : base(message) { }
     }
 }

@@ -20,6 +20,7 @@ namespace BfmeFoundationProject.WorkshopKit.Data
         public bool IsBaseGame() => Guid.StartsWith("original-") || Guid.StartsWith("exp-original-");
         public string GameName() => Game == 2 ? "RotWK" : $"BFME{Game + 1}";
         public string FullName() => $"{Name} ({Version})";
+        public string ExternalInstallerUrl() => Files.Any(x => x.Name == "extinst.exe") ? Files.First(x => x.Name == "extinst.exe").Url : "";
 
         public BfmeWorkshopEntryPreview Preview() => new BfmeWorkshopEntryPreview() { Guid = Guid, Name = Name, Version = Version, Description = Description, ArtworkUrl = ArtworkUrl, Author = Author, Owner = Owner, Game = Game, Type = Type, CreationTime = CreationTime };
         public BfmeWorkshopEntry WithCreationTimeSetToNow() => new BfmeWorkshopEntry() { Guid = Guid, Name = Name, Version = Version, Description = Description, ArtworkUrl = ArtworkUrl, Author = Author, Owner = Owner, Game = Game, Type = Type, CreationTime = new DateTimeOffset(DateTime.Now).ToUnixTimeMilliseconds(), Files = Files, Dependencies = Dependencies };

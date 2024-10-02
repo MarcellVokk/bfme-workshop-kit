@@ -13,22 +13,22 @@ namespace BfmeFoundationProject.WorkshopKit.Utils
         internal static List<string> IgnoredGameFiles = new List<string>()
         {
             "_zzlotr.big",
-            "CS01.vp6",
-            "NLC_LOGO.vp6",
-            "TE_LOGO.vp6",
-            "CS01.vp6",
-            "NewLineLogo.vp6",
-            "EALogo.vp6",
+            "cs01.vp6",
+            "nlc_logo.vp6",
+            "te_logo.vp6",
+            "cs01.vp6",
+            "newlinelogo.vp6",
+            "ealogo.vp6",
             "242.vp6",
             "intel.vp6",
-            "THX.vp6"
+            "thx.vp6"
         };
 
         internal static Dictionary<int, (string gameLanguage, string gameDirectory, string dataDirectory)> GetVirtualRegistry() => new Dictionary<int, (string gameLanguage, string gameDirectory, string dataDirectory)>
         {
-            { 0, (LanguageToLanguageCode(BfmeRegistryManager.GetKeyValue(0, BfmeRegistryKey.Language)), BfmeRegistryManager.GetKeyValue(0, BfmeRegistryKey.InstallPath).Trim('\\').Trim('/'), BfmeRegistryManager.GetKeyValue(0, BfmeRegistryKey.UserDataLeafName)) },
-            { 1, (LanguageToLanguageCode(BfmeRegistryManager.GetKeyValue(1, BfmeRegistryKey.Language)), BfmeRegistryManager.GetKeyValue(1, BfmeRegistryKey.InstallPath).Trim('\\').Trim('/'), BfmeRegistryManager.GetKeyValue(1, BfmeRegistryKey.UserDataLeafName)) },
-            { 2, (LanguageToLanguageCode(BfmeRegistryManager.GetKeyValue(2, BfmeRegistryKey.Language)), BfmeRegistryManager.GetKeyValue(2, BfmeRegistryKey.InstallPath).Trim('\\').Trim('/'), BfmeRegistryManager.GetKeyValue(2, BfmeRegistryKey.UserDataLeafName)) }
+            { 0, (LanguageToLanguageCode(BfmeRegistryManager.GetKeyValue(0, BfmeRegistryKey.Language)), BfmeRegistryManager.GetKeyValue(0, BfmeRegistryKey.InstallPath).Trim('\\').Trim('/').ToLower(), BfmeRegistryManager.GetKeyValue(0, BfmeRegistryKey.UserDataLeafName)) },
+            { 1, (LanguageToLanguageCode(BfmeRegistryManager.GetKeyValue(1, BfmeRegistryKey.Language)), BfmeRegistryManager.GetKeyValue(1, BfmeRegistryKey.InstallPath).Trim('\\').Trim('/').ToLower(), BfmeRegistryManager.GetKeyValue(1, BfmeRegistryKey.UserDataLeafName)) },
+            { 2, (LanguageToLanguageCode(BfmeRegistryManager.GetKeyValue(2, BfmeRegistryKey.Language)), BfmeRegistryManager.GetKeyValue(2, BfmeRegistryKey.InstallPath).Trim('\\').Trim('/').ToLower(), BfmeRegistryManager.GetKeyValue(2, BfmeRegistryKey.UserDataLeafName)) }
         };
 
         internal static void DisableEnhancement(BfmeWorkshopEntry enhancementEntry, Dictionary<string, BfmeWorkshopEntry> activeEnhancements, Dictionary<int, (string gameLanguage, string gameDirectory, string dataDirectory)> virtualRegistry)
