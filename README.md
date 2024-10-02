@@ -15,6 +15,7 @@ This package is a C# wrapper for the public Bfme Foundation Workshop API, and al
 
 ## Usage
 - `BfmeWorkshopQueryManager` exposes several methods that can be used to query or search the workshop.
+- `BfmeWorkshopDownloadManager` exposes several methods that allow you to download packages from the workshop. Downloading a package is required when syncing, as a package preview (obtained by a query) is not enough.
 - `BfmeWorkshopSyncManager` is the workshops built in "patch switcher". It is highly recommended that you use this instead of trying to build your own (trust me, it's not worth it)
 - `BfmeWorkshopLibraryManager` is used to access the users library, and query, add or remove workshop entries from it.
 - `BfmeWorkshopAdminManager` is for uploading or deleting your own entries to the workshop.
