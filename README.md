@@ -24,4 +24,4 @@ This package is a C# wrapper for the public Bfme Foundation Workshop API, and al
 ## Examples
 A very simple workshop browser example made in WinForms is available in this repository.
 
-###### Developed by: Gazdag Marcell (*@marcellvokk*)<br> Founder & Owner: Beterwell (*@Beterwell*)
+###### Developed by The Bfme Foundation Project
