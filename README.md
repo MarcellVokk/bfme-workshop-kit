@@ -24,4 +24,4 @@ This package is a C# wrapper for the public Bfme Foundation Workshop API, and al
 ## Examples
 A very simple workshop browser example made in WinForms is available in this repository.
 
-Developed by The Online Battle Arena Team, in collaboration with the Patch 2.22 Team
+###### Developed by The Online Battle Arena Team, in collaboration with the Patch 2.22 Team
