@@ -18,9 +18,9 @@
 	  <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 	  <Title>BfmeWorkshopKit</Title>
 	  <PackageIcon>workshopkiticon.png</PackageIcon>
-	  <Version>1.9.1</Version>
-	  <AssemblyVersion>1.9.1</AssemblyVersion>
-	  <FileVersion>1.9.1</FileVersion>
+	  <Version>1.9.5</Version>
+	  <AssemblyVersion>1.9.5</AssemblyVersion>
+	  <FileVersion>1.9.5</FileVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

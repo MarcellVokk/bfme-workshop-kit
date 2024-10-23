@@ -1,6 +1,7 @@
 ﻿using Amazon.S3;
 using Amazon.S3.Transfer;
 using BfmeFoundationProject.WorkshopKit.Data;
+using BfmeFoundationProject.WorkshopKit.Logic;
 using Newtonsoft.Json;
 using System.Collections.Specialized;
 using System.Diagnostics;
@@ -21,7 +22,7 @@ namespace BfmeFoundationProject.WorkshopKit.Utils
             if (requestParameters != null)
                 requestParameters.ToList().ForEach(x => requestQueryParameters.Add(x.Key, x.Value == "" ? "~" : x.Value));
 
-            using (var requestMessage = new HttpRequestMessage(HttpMethod.Get, $"https://bfmeladder.com/api/{apiEndpointPath}{(requestQueryParameters.Count > 0 ? $"?{requestQueryParameters.ToString()}" : "")}"))
+            using (var requestMessage = new HttpRequestMessage(HttpMethod.Get, $"{BfmeWorkshopManager.WorkshopServerHost}/api/{apiEndpointPath}{(requestQueryParameters.Count > 0 ? $"?{requestQueryParameters.ToString()}" : "")}"))
             {
                 requestMessage.Headers.Add("AuthAccountUuid", authInfo.Uuid);
                 requestMessage.Headers.Add("AuthAccountPassword", authInfo.Password);
@@ -35,7 +36,7 @@ namespace BfmeFoundationProject.WorkshopKit.Utils
 
         internal static async Task<string> Set(BfmeWorkshopAuthInfo authInfo, string apiEndpointPath, string data)
         {
-            using (var requestMessage = new HttpRequestMessage(HttpMethod.Post, $"https://bfmeladder.com/api/{apiEndpointPath}"))
+            using (var requestMessage = new HttpRequestMessage(HttpMethod.Post, $"{BfmeWorkshopManager.WorkshopServerHost}/api/{apiEndpointPath}"))
             {
                 requestMessage.Headers.Add("AuthAccountUuid", authInfo.Uuid);
                 requestMessage.Headers.Add("AuthAccountPassword", authInfo.Password);
@@ -78,50 +79,46 @@ namespace BfmeFoundationProject.WorkshopKit.Utils
 
         public static async Task Download(string url, string localPath, Action<int>? OnProgressUpdate = null)
         {
-            for (int i = 0; i < 3; i++)
+            try
             {
-                try
+                var response = await HttpClient.GetAsync(url, HttpCompletionOption.ResponseHeadersRead);
+
+                response.EnsureSuccessStatusCode();
+
+                var totalBytes = response.Content.Headers.ContentLength ?? -1L;
+                var totalBytesRead = 0L;
+                var buffer = new byte[1024];
+                var isMoreToRead = true;
+                int progressInPercent = 0;
+
+                using var fileStream = new FileStream(localPath, FileMode.Create, FileAccess.Write, FileShare.None, 1024, true);
+                using var contentStream = await response.Content.ReadAsStreamAsync();
+
+                do
                 {
-                    using (var response = await HttpClient.GetAsync(url, HttpCompletionOption.ResponseHeadersRead))
+                    var bytesRead = await contentStream.ReadAsync(buffer, 0, buffer.Length);
+                    if (bytesRead == 0)
                     {
-                        response.EnsureSuccessStatusCode();
-
-                        var totalBytes = response.Content.Headers.ContentLength ?? -1L;
-                        var totalBytesRead = 0L;
-                        var buffer = new byte[4096];
-                        var isMoreToRead = true;
-                        int progressInPercent = 0;
-
-                        using (var fileStream = new FileStream(localPath, FileMode.Create, FileAccess.Write, FileShare.None, 4096, true))
-                        using (var stream = await response.Content.ReadAsStreamAsync())
-                            do
-                            {
-                                var bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length);
-                                if (bytesRead == 0)
-                                {
-                                    isMoreToRead = false;
-                                    continue;
-                                }
-
-                                await fileStream.WriteAsync(buffer, 0, bytesRead);
-
-                                totalBytesRead += bytesRead;
-                                int newProgressInPercent = (int)(totalBytesRead * 100 / totalBytes);
-
-                                if (progressInPercent != newProgressInPercent)
-                                {
-                                    progressInPercent = newProgressInPercent;
-                                    OnProgressUpdate?.Invoke(newProgressInPercent);
-                                }
-                            }
-                            while (isMoreToRead);
+                        isMoreToRead = false;
+                        continue;
                     }
-                    break;
+
+                    await fileStream.WriteAsync(buffer, 0, bytesRead);
+
+                    totalBytesRead += bytesRead;
+                    int newProgressInPercent = (int)(totalBytesRead * 100 / totalBytes);
+
+                    if (progressInPercent != newProgressInPercent)
+                    {
+                        progressInPercent = newProgressInPercent;
+                        OnProgressUpdate?.Invoke(newProgressInPercent);
+                    }
                 }
-                catch (Exception ex)
-                {
-                    if (i == 2) throw new HttpRequestException($"Error while downloading from {url}\n{ex.ToString()}");
-                }
+                while (isMoreToRead);
+            }
+            catch (Exception ex)
+            {
+                throw new HttpRequestException($"Error while downloading from {url}\n{ex.ToString()}");
             }
         }
 
@@ -130,7 +127,7 @@ namespace BfmeFoundationProject.WorkshopKit.Utils
             NameValueCollection requestQueryParameters = System.Web.HttpUtility.ParseQueryString(string.Empty);
             requestQueryParameters.Add("id", id == "" ? "~" : id);
 
-            using (var requestMessage = new HttpRequestMessage(HttpMethod.Delete, $"https://bfmeladder.com/api/{apiEndpointPath}?{requestQueryParameters.ToString()}"))
+            using (var requestMessage = new HttpRequestMessage(HttpMethod.Delete, $"{BfmeWorkshopManager.WorkshopServerHost}/api/{apiEndpointPath}?{requestQueryParameters.ToString()}"))
             {
                 requestMessage.Headers.Add("AuthAccountUuid", authInfo.Uuid);
                 requestMessage.Headers.Add("AuthAccountPassword", authInfo.Password);
@@ -169,7 +166,7 @@ namespace BfmeFoundationProject.WorkshopKit.Utils
             var buffer = new byte[bufferSize];
             long uploaded = 0;
             long total = content.Length;
-            content.Position = 0; // Reset stream position
+            content.Position = 0;
 
             try
             {
@@ -190,7 +187,6 @@ namespace BfmeFoundationProject.WorkshopKit.Utils
             }
             catch (Exception ex)
             {
-                // Log the exception here to diagnose the issue
                 Debug.WriteLine($"An exception occurred: {ex}");
                 throw;
             }

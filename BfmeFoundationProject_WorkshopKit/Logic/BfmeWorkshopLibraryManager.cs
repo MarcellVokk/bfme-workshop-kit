@@ -40,13 +40,13 @@ namespace BfmeFoundationProject.WorkshopKit.Logic
                     }
                 }
 
-                libraryEntries = libraryEntries.OrderByDescending(x => x.Guid.StartsWith("official-")).OrderByDescending(x => x.Guid.StartsWith("original-")).OrderByDescending(x => x.Guid.StartsWith("exp-original-")).Where(x => (keyword.Length > 0 ? (x.Name.ToLower().Contains(keyword) || x.Description.ToLower().Contains(keyword)) : true) && (game != -1 ? x.Game == game : true) && (type != -1 ? (type == -2 ? (x.Type == 0 || x.Type == 1) : (type == -3 ? (x.Type == 2 || x.Type == 3) : x.Type == type)) : true)).ToList();
+                libraryEntries = libraryEntries.OrderByDescending(x => x.Guid.StartsWith("official-")).OrderByDescending(x => x.Guid.StartsWith("original-")).OrderByDescending(x => x.Guid.StartsWith("exp-original-")).Where(x => (keyword.Length > 0 ? (x.Name.ToLower().Contains(keyword.ToLower()) || x.Description.ToLower().Contains(keyword.ToLower())) : true) && (game != -1 ? x.Game == game : true) && (type != -1 ? (type == -2 ? (x.Type == 0 || x.Type == 1) : (type == -3 ? (x.Type == 2 || x.Type == 3) : x.Type == type)) : true)).ToList();
 
                 if(page == -1)
                     return libraryEntries;
 
                 if (libraryEntries.Count - page * 25 > 0)
-                    return libraryEntries.GetRange(page * 25, Math.Min(25, libraryEntries.Count - page * 25));
+                    return libraryEntries.GetRange(page * 25, Math.Min(25, libraryEntries.Count - page * 25)).Select(x => x.WithEmptyMetadata()).ToList();
                 else
                     return new List<BfmeWorkshopEntryPreview>();
             });

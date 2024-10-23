@@ -33,15 +33,9 @@ namespace BfmeFoundationProject.WorkshopKit.Logic
             }) ?? new List<BfmeWorkshopEntryPreview>()).OrderBy(x => x.Name).OrderByDescending(x => x.Guid.StartsWith("official-")).OrderByDescending(x => x.Guid.StartsWith("original-")).OrderByDescending(x => x.Guid.StartsWith("exp-original-")).ToList();
         }
 
-        public static async Task<QueryGetResponse> Get(string entryGuid)
+        public static async Task<BfmeWorkshopEntryPreview> Get(string entryGuid)
         {
-            return await HttpUtils.GetJson<QueryGetResponse>(BfmeWorkshopAuthInfo.Unauthenticated, "workshop", new Dictionary<string, string>() { { "guid", entryGuid } });
-        }
-
-        public struct QueryGetResponse
-        {
-            public BfmeWorkshopEntryPreview entry;
-            public BfmeWorkshopEntryMetadata metadata;
+            return await HttpUtils.GetJson<BfmeWorkshopEntryPreview>(BfmeWorkshopAuthInfo.Unauthenticated, "workshop", new Dictionary<string, string>() { { "guid", entryGuid } });
         }
     }
 }

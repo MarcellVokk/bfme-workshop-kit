@@ -11,7 +11,6 @@ namespace BfmeFoundationProject.WorkshopKit.Logic
     [SupportedOSPlatform("windows")]
     public static class BfmeWorkshopSyncManager
     {
-        private static HttpClient HttpClient = new HttpClient() { Timeout = Timeout.InfiniteTimeSpan };
         private static FileSystemWatcher ActivePatchWatcher;
 
         public static bool Syncing { get; private set; } = false;
@@ -49,6 +48,9 @@ namespace BfmeFoundationProject.WorkshopKit.Logic
 
         public static async Task Sync(BfmeWorkshopEntry entry, List<string>? enhancements = null, Action<int>? OnProgressUpdate = null)
         {
+            if (entry.ExternalInstallerUrl() != "")
+                throw new BfmeWorkshopExternalModNotInstalledSyncException("This external mod is not installed yet. Install it and try again!");
+
             ActivePatchWatcher.EnableRaisingEvents = false;
             Syncing = true;
             OnProgressUpdate?.Invoke(0);
@@ -62,7 +64,7 @@ namespace BfmeFoundationProject.WorkshopKit.Logic
                 int reportedProgress = 0;
                 var keybindsDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "BFME Workshop", "Keybinds", $"{entry.GameName()}-{entry.Name}");
                 var virtualRegistry = ConfigUtils.GetVirtualRegistry();
-                var activeEnhancements = await BfmeWorkshopStateManager.GetActiveEnhancements(entry.Game);
+                var activeEnhancements = await BfmeWorkshopManager.GetActiveEnhancements(entry.Game);
                 var dependencies = new List<BfmeWorkshopEntry>();
                 var files = new List<(BfmeWorkshopFile file, BfmeWorkshopEntry entry, bool isBaseFile)>();
 
@@ -86,11 +88,11 @@ namespace BfmeFoundationProject.WorkshopKit.Logic
 
                         // If rotwk, add bfme2's enabled enhancements to active enhancements
                         if (entry.Game == 2)
-                            activeEnhancements = activeEnhancements.Concat(await BfmeWorkshopStateManager.GetActiveEnhancements(1)).ToDictionary();
+                            activeEnhancements = activeEnhancements.Concat(await BfmeWorkshopManager.GetActiveEnhancements(1)).ToDictionary();
 
                         // If bfme2, add rotwk's enabled enhancements to active enhancements
                         if (entry.Game == 1 && BfmeRegistryManager.IsInstalled(2))
-                            activeEnhancements = activeEnhancements.Concat(await BfmeWorkshopStateManager.GetActiveEnhancements(2)).ToDictionary();
+                            activeEnhancements = activeEnhancements.Concat(await BfmeWorkshopManager.GetActiveEnhancements(2)).ToDictionary();
 
                         // Download all dependencies
                         foreach (var dependency in entry.Dependencies)
@@ -181,7 +183,7 @@ namespace BfmeFoundationProject.WorkshopKit.Logic
                     await Task.Run(async () =>
                     {
                         // Get the curently active patch, and if it's not set yet, set it to the base vanilla patch
-                        BfmeWorkshopEntry activePatch = await BfmeWorkshopStateManager.GetActivePatch(entry.Game) ?? await BfmeWorkshopEntry.BaseGame(entry.Game);
+                        BfmeWorkshopEntry activePatch = await BfmeWorkshopManager.GetActivePatch(entry.Game) ?? await BfmeWorkshopEntry.BaseGame(entry.Game);
 
                         await ConfigUtils.SaveActivePatch(activePatch);
 
@@ -247,7 +249,7 @@ namespace BfmeFoundationProject.WorkshopKit.Logic
                     await scanFolder(subFolder);
             }
 
-            return new BfmeWorkshopEntry() { Guid = $"snapshot-{(game == 2 ? "RotWK" : $"BFME{game + 1}")}-{Guid.NewGuid()}", Name = $"{(game == 2 ? "RotWK" : $"BFME{game + 1}")} Snapshot", Version = DateTime.Now.ToString("yyyy.MM.dd HH:mm:ss"), Description = "", ArtworkUrl = "https://workshop-files.bfmeladder.com/snapshot-artwork.png", Author = "Me", Owner = "", Game = game, Type = 4, CreationTime = new DateTimeOffset(DateTime.Now).ToUnixTimeMilliseconds(), Files = files, Dependencies = new List<string>() };
+            return new BfmeWorkshopEntry() { Guid = $"snapshot-{(game == 2 ? "RotWK" : $"BFME{game + 1}")}-{Guid.NewGuid()}", Name = $"{(game == 2 ? "RotWK" : $"BFME{game + 1}")} Snapshot", Version = DateTime.Now.ToString("yyyy.MM.dd HH:mm:ss"), Description = "", ArtworkUrl = $"{BfmeWorkshopManager.WorkshopFilesHost}/snapshot-artwork.png", Author = "Me", Owner = "", Game = game, Type = 4, CreationTime = new DateTimeOffset(DateTime.Now).ToUnixTimeMilliseconds(), Files = files, Dependencies = new List<string>() };
         }
 
         private static void AddFiles(BfmeWorkshopEntry entry, bool isBaseEntry, List<(BfmeWorkshopFile file, BfmeWorkshopEntry entry, bool isBaseFile)> files, Dictionary<int, (string gameLanguage, string gameDirectory, string dataDirectory)> virtualRegistry)
@@ -388,5 +390,10 @@ namespace BfmeFoundationProject.WorkshopKit.Logic
     public class BfmeWorkshopFileMissingSyncException : Exception
     {
         public BfmeWorkshopFileMissingSyncException(string message) : base(message) { }
+    }
+
+    public class BfmeWorkshopExternalModNotInstalledSyncException : Exception
+    {
+        public BfmeWorkshopExternalModNotInstalledSyncException(string message) : base(message) { }
     }
 }
