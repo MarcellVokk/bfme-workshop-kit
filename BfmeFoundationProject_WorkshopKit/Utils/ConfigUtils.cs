@@ -26,9 +26,9 @@ namespace BfmeFoundationProject.WorkshopKit.Utils
 
         internal static Dictionary<int, (string gameLanguage, string gameDirectory, string dataDirectory)> GetVirtualRegistry() => new Dictionary<int, (string gameLanguage, string gameDirectory, string dataDirectory)>
         {
-            { 0, (LanguageToLanguageCode(BfmeRegistryManager.GetKeyValue(0, BfmeRegistryKey.Language)), BfmeRegistryManager.GetKeyValue(0, BfmeRegistryKey.InstallPath).Trim('\\').Trim('/').ToLower(), BfmeRegistryManager.GetKeyValue(0, BfmeRegistryKey.UserDataLeafName)) },
-            { 1, (LanguageToLanguageCode(BfmeRegistryManager.GetKeyValue(1, BfmeRegistryKey.Language)), BfmeRegistryManager.GetKeyValue(1, BfmeRegistryKey.InstallPath).Trim('\\').Trim('/').ToLower(), BfmeRegistryManager.GetKeyValue(1, BfmeRegistryKey.UserDataLeafName)) },
-            { 2, (LanguageToLanguageCode(BfmeRegistryManager.GetKeyValue(2, BfmeRegistryKey.Language)), BfmeRegistryManager.GetKeyValue(2, BfmeRegistryKey.InstallPath).Trim('\\').Trim('/').ToLower(), BfmeRegistryManager.GetKeyValue(2, BfmeRegistryKey.UserDataLeafName)) }
+            { 0, (BfmeRegistryManager.GameLanguageToLanguageCode(BfmeRegistryManager.GetKeyValue(0, BfmeRegistryKey.Language)), BfmeRegistryManager.GetKeyValue(0, BfmeRegistryKey.InstallPath).Trim('\\').Trim('/').ToLower(), BfmeRegistryManager.GetKeyValue(0, BfmeRegistryKey.UserDataLeafName)) },
+            { 1, (BfmeRegistryManager.GameLanguageToLanguageCode(BfmeRegistryManager.GetKeyValue(1, BfmeRegistryKey.Language)), BfmeRegistryManager.GetKeyValue(1, BfmeRegistryKey.InstallPath).Trim('\\').Trim('/').ToLower(), BfmeRegistryManager.GetKeyValue(1, BfmeRegistryKey.UserDataLeafName)) },
+            { 2, (BfmeRegistryManager.GameLanguageToLanguageCode(BfmeRegistryManager.GetKeyValue(2, BfmeRegistryKey.Language)), BfmeRegistryManager.GetKeyValue(2, BfmeRegistryKey.InstallPath).Trim('\\').Trim('/').ToLower(), BfmeRegistryManager.GetKeyValue(2, BfmeRegistryKey.UserDataLeafName)) }
         };
 
         internal static void DisableEnhancement(BfmeWorkshopEntry enhancementEntry, Dictionary<string, BfmeWorkshopEntry> activeEnhancements, Dictionary<int, (string gameLanguage, string gameDirectory, string dataDirectory)> virtualRegistry)
@@ -86,30 +86,6 @@ namespace BfmeFoundationProject.WorkshopKit.Utils
                     }
                 }
             }
-        }
-
-        private static string LanguageToLanguageCode(string language)
-        {
-            Dictionary<string, string> languages = new Dictionary<string, string>()
-            {
-                { "english", "EN" },
-                { "english uk", "EN" },
-                { "english us", "EN" },
-                { "french", "FR" },
-                { "german", "DE" },
-                { "italian", "IT" },
-                { "spanish", "ES" },
-                { "swedish", "SV" },
-                { "dutch", "NL" },
-                { "polish", "PL" },
-                { "norwegian", "NO" },
-                { "russian", "RU" }
-            };
-
-            if (languages.ContainsKey(language.ToLower()))
-                return languages[language.ToLower()];
-
-            return language.ToLower();
         }
     }
 }
