@@ -7,6 +7,7 @@
         public string Url;
         public string Md5;
         public string Language;
+        public long Size;
 
         public static BfmeWorkshopFile MakeModFolderRedirect(string actualModFolder) => new BfmeWorkshopFile() { Guid = "mod_folder_redirect", Name = "mod_folder_redirect", Language = "", Md5 = "", Url = actualModFolder };
     }
