@@ -1,4 +1,5 @@
-﻿using BfmeFoundationProject.RegistryKit;
+﻿using BfmeFoundationProject.HttpInstruments;
+using BfmeFoundationProject.RegistryKit;
 using BfmeFoundationProject.WorkshopKit.Data;
 using BfmeFoundationProject.WorkshopKit.Utils;
 using Newtonsoft.Json;
@@ -98,14 +99,16 @@ namespace BfmeFoundationProject.WorkshopKit.Logic
                         foreach (var dependency in entry.Dependencies)
                             dependencies.Add(await BfmeWorkshopDownloadManager.Download(dependency));
 
+                        // Download all explicit enhancements. Make sure it isn't already a dependency
+                        foreach (var explicitEnhancement in (enhancements ?? new List<string>()).Where(x => !entry.Dependencies.Any(y => y.Split(':')[0] == x.Split(':')[0]) && x.Split(':')[0] != entry.Guid))
+                            dependencies.Add(await BfmeWorkshopDownloadManager.Download(explicitEnhancement));
+
                         // Download all implicit dependencies
                         while (dependencies.SelectMany(x => x.Dependencies).Any(x => !dependencies.Any(y => y.Guid == x.Split(':')[0])))
                             foreach (var dependency in dependencies.SelectMany(x => x.Dependencies).Where(x => !dependencies.Any(y => y.Guid == x.Split(':')[0])).ToList())
                                 dependencies.Add(await BfmeWorkshopDownloadManager.Download(dependency));
 
-                        // Download all explicit enhancements. Make sure it isn't already a dependency
-                        foreach (var explicitEnhancement in (enhancements ?? new List<string>()).Where(x => !entry.Dependencies.Any(y => y.Split(':')[0] == x.Split(':')[0])))
-                            dependencies.Add(await BfmeWorkshopDownloadManager.Download(explicitEnhancement));
+                        dependencies.RemoveAll(x => x.Guid == entry.Guid);
 
                         // If the curent patch is a mod, and a patch (whose game is not the same as the curent patches) was listed as a dependency, set the active patch of that game to it
                         if (entry.Type == 1 && dependencies.Any(x => x.Type == 0 && x.Game != entry.Game)) await ConfigUtils.SaveActivePatch(dependencies.First(x => x.Type == 0 && x.Game != entry.Game));
@@ -114,6 +117,8 @@ namespace BfmeFoundationProject.WorkshopKit.Logic
                         // If there are explicit enhancements specified, disable all enhancements except those and the dependencies specified with the curent entry.
                         foreach (var enhancement in activeEnhancements.Values.Where(x => (x.Type == 2 && !x.Dependencies.Contains(entry.Guid) && !x.Dependencies.Contains($"{entry.Guid}:{entry.Version}")) || x.Game != entry.Game || enhancements != null))
                             ConfigUtils.DisableEnhancement(enhancement, activeEnhancements, virtualRegistry);
+
+                        activeEnhancements = activeEnhancements.ToDictionary();
 
                         // Enable all enhancements that are listed as dependencies (explicitly or implicitly) of the curent patch
                         foreach (var dependency in dependencies.Where(x => (x.Type == 2 || x.Type == 3) && (x.Dependencies.Contains(entry.Guid) || x.Dependencies.Contains($"{entry.Guid}:{entry.Version}") || dependencies.Any(y => x.Dependencies.Contains(y.Guid)) || dependencies.Any(y => x.Dependencies.Contains($"{y.Guid}:{y.Version}")))))
@@ -334,7 +339,7 @@ namespace BfmeFoundationProject.WorkshopKit.Logic
             }
 
             // If the file was not found in neither the destination directory nor in the local cache, download the file to either the cache or directly to the destination
-            await HttpUtils.Download(file.Url, (isBaseFile || entry.Type == 1) ? Path.Combine(destinationDirectory, fileName) : Path.Combine(cacheDirectory, $"{file.Guid}.pfcache"));
+            await HttpsInstruments.Download(file.Url, (isBaseFile || entry.Type == 1) ? Path.Combine(destinationDirectory, fileName) : Path.Combine(cacheDirectory, $"{file.Guid}.pfcache"));
 
             // If the file was downloaded into cache, copy the file from the cache directory to the destination
             if (!isBaseFile && entry.Type != 1)
