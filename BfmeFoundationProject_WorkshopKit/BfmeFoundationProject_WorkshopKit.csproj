@@ -18,9 +18,9 @@
 	  <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 	  <Title>BfmeWorkshopKit</Title>
 	  <PackageIcon>workshopkiticon.png</PackageIcon>
-	  <Version>1.9.5</Version>
-	  <AssemblyVersion>1.9.5</AssemblyVersion>
-	  <FileVersion>1.9.5</FileVersion>
+	  <Version>2.0.3</Version>
+	  <AssemblyVersion>2.0.3</AssemblyVersion>
+	  <FileVersion>2.0.3</FileVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -54,6 +54,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BfmeFoundationProject_DirectXRuntime\BfmeFoundationProject_DirectXRuntime.csproj" />
+    <ProjectReference Include="..\BfmeFoundationProject_HttpInstruments\BfmeFoundationProject_HttpInstruments.csproj" />
     <ProjectReference Include="..\BfmeFoundationProject_RegistryKit\BfmeFoundationProject_RegistryKit.csproj" />
   </ItemGroup>
 
